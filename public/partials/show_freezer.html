@@ -1,0 +1,42 @@
+
+  <div class="page-header">
+    <h1>Tabar Lab - NYSTEM Freezer Home</h1>
+
+  </div>
+
+  <a href="#/build_freezer" class="btn btn-default" role="button">Build Freezer</a>
+  <a href="#/show_freezer" class="btn btn-default" role="button">Show Freezers</a>
+
+
+  <h1>Freezer List</h1>
+
+    <div class ="container-fluid">
+
+      <button class="btn btn-default" role="button" ng-click="add_freezer('NYSTEM3','RL','9','916',0,0)">Add Freezer</button>
+
+    
+    <p>Select Freezer: </p><select ng-model="default_freezer" ng-options="freezer.name for freezer in freezers" ></select>
+
+    <div class="container-fluid">
+    <row>
+
+    <div class="col-md-6">
+
+    <table class="table">
+    	<thead><th>Name</th><th>Building</th><th>Floor</th><th>Room</th><th>Shelves</th><th>Racks</th></thead>
+    	<tr><td>{{default_freezer.name}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td><td>{{default_freezer.shelves}}</td><td>{{default_freezer.racks}}</td><tr>
+
+
+
+
+    </table>
+
+    <p>{{freezers}}</p>
+
+    </div>
+    
+    <row>
+
+</div>
+
+  <!-- rest of template -->

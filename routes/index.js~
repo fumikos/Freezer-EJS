@@ -1,0 +1,24 @@
+var express = require('express');
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Lab' });
+});
+
+
+var mongoose = require('mongoose');
+var Freezer = mongoose.model('Freezer');
+
+
+router.get('/freezers', function(req, res, next) {
+  Freezer.find(function(err, freezers){
+    if(err){ return next(err); }
+
+    res.json(freezers);
+  });
+});
+
+
+
+module.exports = router;

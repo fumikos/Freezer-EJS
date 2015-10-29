@@ -12,11 +12,12 @@ function($stateProvider, $urlRouterProvider) {
       url: '/home',
       templateUrl: '/partials/home.html',
       controller: 'freezerCtrl',
-      //Does not work
-      /*resolve: {
-    	freezerPromise: ['$scope',function($scope){
-      return $scope.getAll();
-      }]*/
+      resolve: {
+    	freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+    		}]
+  		}
+      
       
     });
 
@@ -27,7 +28,8 @@ function($stateProvider, $urlRouterProvider) {
     .state('freezer', {
       url: '/freezers',
       templateUrl: 'partials/freezers.html',
-      controller: 'freezerCtrl'
+      controller: 'freezerCtrl',
+      
     });
 
 
@@ -36,11 +38,39 @@ function($stateProvider, $urlRouterProvider) {
 
 
 
+freezerApp.factory('freezers', ['$http',function($http){
+  var o = {
+    freezers: []
+  };
+  
+
+
+  o.getAll = function() {
+    return $http.get('/freezers').success(function(data){
+      angular.copy(data, o.freezers);
+    });
+  }; 
+
+  /*o.create = function(post) {
+	  return $http.post('/posts', post, {
+	    headers: {Authorization: 'Bearer '+auth.getToken()}
+	  }).success(function(data){
+	    o.posts.push(data);
+	  });
+	};*/
+
+ 
+
+return o;
+
+}]);
 
 
 
 
-freezerApp.controller('freezerCtrl', ['$scope', '$http', function ($scope,$http) {
+freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($scope,$http,freezers) {
+
+	$scope.freezers = freezers.freezers;
 
 	$scope.freezer = 
 	{'freezername':'Freezer Name',
@@ -58,7 +88,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', function ($scope,$http)
 		
 
 
-	$scope.freezers.push(
+	freezers.freezers.push(
 
 	{'freezername': $scope.freezer.freezername,
     'building':$scope.freezer.building,
@@ -79,22 +109,14 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', function ($scope,$http)
 
 };
 
-  $scope.freezers = [
-    {
-    }
-   
-
-    ];
+  
+    
 
 
 
   $scope.default_freezer = $scope.freezers[0];
 
-  $scope.getAll = function() {
-    return $http.get('/freezers').success(function(data){
-      angular.copy(data, $scope.freezers);
-    });
-  }; 
+  
 
   
 

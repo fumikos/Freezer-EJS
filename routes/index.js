@@ -25,6 +25,7 @@ router.get('/freezers', function(req, res, next) {
 
 router.post('/freezers', function(req, res, next) {
   var freezer = new Freezer(req.body);
+ 
 
   freezer.save(function(err, freezer){
     if(err){ return next(err); }
@@ -32,6 +33,31 @@ router.post('/freezers', function(req, res, next) {
     res.json(freezer);
   });
 });
+
+//Need to fix update_freezers post. Does not work (look in Mongoose documenation?)
+
+ /*
+
+ router.post('/update_freezers', function(req, res, next) {
+  var freezer = new Freezer(req.body);
+
+  console.log(req.body);
+
+  console.log(req.body.floor);
+
+  var query = { 'freezername': req.body.freezername };
+  var update = { $set: {'floor': req.body.floor }};
+
+  freezer.findOneAndUpdate(query, update, function(err, freezer){
+    if(err){ return next(err); }
+
+    res.json(freezer);
+
+  });
+});
+
+*/
+
 
 
 

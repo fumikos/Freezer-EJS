@@ -29,6 +29,11 @@ function($stateProvider, $urlRouterProvider) {
       url: '/freezers',
       templateUrl: 'partials/freezers.html',
       controller: 'freezerCtrl',
+      resolve: {
+    	freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+    		}]
+  		}
       
     });
 
@@ -51,13 +56,24 @@ freezerApp.factory('freezers', ['$http',function($http){
     });
   }; 
 
-  /*o.create = function(post) {
-	  return $http.post('/posts', post, {
-	    headers: {Authorization: 'Bearer '+auth.getToken()}
-	  }).success(function(data){
-	    o.posts.push(data);
+
+
+	 o.create_freezer = function(freezer) {
+	  return $http.post('/freezers', freezer).success(function(data){
+	    o.freezers.push(data);
 	  });
-	};*/
+	};
+
+
+	o.update_freezer = function(freezer) {
+	  return $http.post('/update_freezers', freezer).success(function(data){
+
+	    //o.freezers.push(data);
+	  });
+	};
+
+
+	
 
  
 
@@ -71,6 +87,7 @@ return o;
 freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($scope,$http,freezers) {
 
 	$scope.freezers = freezers.freezers;
+	
 
 	$scope.freezer = 
 	{'freezername':'Freezer Name',
@@ -83,27 +100,24 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($
 
 	};
 
-	$scope.add_freezer = function() {
+	$scope.default_freezer = $scope.freezers[0];
+
+$scope.add_freezer = function() {
 	
-		
-
-
-	freezers.freezers.push(
-
-	{'freezername': $scope.freezer.freezername,
-    'building':$scope.freezer.building,
-    'floor':$scope.freezer.floor,
-    'room':$scope.freezer.room,
-    'shelves': $scope.freezer.shelves,
-    'racks': $scope.freezer.racks
-
-
-	}
+	freezers.create_freezer($scope.freezer);
 
 
 
 
-		);
+
+};
+
+
+$scope.update_freezer = function() {
+	
+	freezers.update_freezer($scope.default_freezer);
+
+
 
 
 
@@ -113,8 +127,11 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($
     
 
 
+    
 
-  $scope.default_freezer = $scope.freezers[0];
+
+
+  
 
   
 

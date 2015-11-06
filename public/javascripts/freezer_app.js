@@ -68,10 +68,42 @@ freezerApp.factory('freezers', ['$http',function($http){
 	o.update_freezer = function(freezer) {
 	  return $http.post('/update_freezers', freezer).success(function(data){
 
-	    //o.freezers.push(data);
+	  	console.log(data.ok);
+
+	  	
+	  	
+
+	    
 	  });
 	};
 
+	o.delete_freezer = function(freezer) {
+	  return $http.post('/delete_freezers', freezer).success(function(data){
+
+
+	  	
+	  	if (data.ok === 1 && data.n === 1){
+
+
+
+	  		
+
+	  		var index = o.freezers.indexOf(freezer);
+	  		o.freezers.splice(index,1);
+
+	  		
+	  	}
+
+	  	
+	  	
+
+
+	  	
+	  	
+	  	
+	    
+	  });
+	};
 
 	
 
@@ -105,6 +137,16 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($
 $scope.add_freezer = function() {
 	
 	freezers.create_freezer($scope.freezer);
+
+
+
+
+
+};
+
+$scope.delete_freezer = function() {
+	
+	freezers.delete_freezer($scope.default_freezer);
 
 
 

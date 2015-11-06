@@ -42,6 +42,7 @@
     <input type="text" name="input" ng-model="freezer.shelves" ng-click="freezer.shelves = ''">
     <input type="text" name="input" ng-model="freezer.racks" ng-click="freezer.racks = ''">
     <button class="btn btn-default" role="button" ng-click="add_freezer()">Add Freezer</button>
+    
 
 
 
@@ -52,7 +53,7 @@
 
      
 
-    <h1>Edit Freezer</h1>
+    <h1>Edit/Delete Freezer</h1>
 
     <p>Select Freezer: </p><select ng-model="default_freezer" ng-options="freezer.freezername for freezer in freezers" ></select>
 
@@ -63,6 +64,7 @@
     <input type="text" name="input" ng-model="default_freezer.shelves" ng-click="freezer.shelves = ''">
     <input type="text" name="input" ng-model="default_freezer.racks" ng-click="freezer.racks = ''">
     <button class="btn btn-default" role="button" ng-click="update_freezer()">Save Changes</button>
+    <button class="btn btn-default" role="button" ng-click="delete_freezer()">Delete Freezer</button>
 
 
     

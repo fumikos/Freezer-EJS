@@ -7,8 +7,11 @@ var bodyParser = require('body-parser');
 
 
 var mongoose = require('mongoose');
+var passport = require('passport');
 
 require('./models/freezers');
+require('./models/Users');
+require('./config/passport');
 
 mongoose.connect('mongodb://localhost/freezers');
 
@@ -31,6 +34,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
 
 app.use('/', routes);
 app.use('/users', users);

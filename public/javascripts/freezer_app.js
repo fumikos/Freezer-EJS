@@ -37,16 +37,42 @@ function($stateProvider, $urlRouterProvider) {
       
     });
 
+    $stateProvider
+    .state('login', {
+  url: '/login',
+  templateUrl: '/partials/login.html',
+  controller: 'AuthCtrl',
+  onEnter: ['$state', 'auth', function($state, auth){
+    if(auth.isLoggedIn()){
+      $state.go('home');
+    }
+  }]
+})
+.state('register', {
+  url: '/register',
+  templateUrl: '/partials/register.html',
+  controller: 'AuthCtrl',
+  onEnter: ['$state', 'auth', function($state, auth){
+    if(auth.isLoggedIn()){
+      $state.go('home');
+    }
+  }]
+});
+
+
+
 
   $urlRouterProvider.otherwise('home');
 }]);
 
 
 
-freezerApp.factory('freezers', ['$http',function($http){
+freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
   var o = {
     freezers: []
   };
+
+
   
 
 
@@ -59,14 +85,18 @@ freezerApp.factory('freezers', ['$http',function($http){
 
 
 	 o.create_freezer = function(freezer) {
-	  return $http.post('/freezers', freezer).success(function(data){
+	  return $http.post('/freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
 	    o.freezers.push(data);
 	  });
 	};
 
 
 	o.update_freezer = function(freezer) {
-	  return $http.post('/update_freezers', freezer).success(function(data){
+	  return $http.post('/update_freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
 
 	  	console.log(data.ok);
 
@@ -78,7 +108,9 @@ freezerApp.factory('freezers', ['$http',function($http){
 	};
 
 	o.delete_freezer = function(freezer) {
-	  return $http.post('/delete_freezers', freezer).success(function(data){
+	  return $http.post('/delete_freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
 
 
 	  	
@@ -115,9 +147,92 @@ return o;
 
 
 
+freezerApp.factory('auth', ['$http', '$window', function($http, $window){
+   var auth = {};
 
-freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', function ($scope,$http,freezers) {
+   auth.saveToken = function (token){
+  $window.localStorage['freezer-app-token'] = token;
+};
 
+auth.getToken = function (){
+  return $window.localStorage['freezer-app-token'];
+};
+
+auth.isLoggedIn = function(){
+  var token = auth.getToken();
+
+  if(token){
+    var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+    return payload.exp > Date.now() / 1000;
+  } else {
+    return false;
+  }
+};
+
+
+auth.currentUser = function(){
+  if(auth.isLoggedIn()){
+    var token = auth.getToken();
+    var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+    return payload.username;
+  }
+};
+
+
+auth.register = function(user){
+  return $http.post('/register', user).success(function(data){
+    auth.saveToken(data.token);
+  });
+};
+
+
+auth.logIn = function(user){
+  return $http.post('/login', user).success(function(data){
+    auth.saveToken(data.token);
+  });
+};
+
+auth.logOut = function(){
+  $window.localStorage.removeItem('freezer-app-token');
+};
+
+
+
+  return auth;
+}])
+
+
+
+freezerApp.controller('AuthCtrl', [
+'$scope',
+'$state',
+'auth',
+function($scope, $state, auth){
+  $scope.user = {};
+
+  $scope.register = function(){
+    auth.register($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+
+  $scope.logIn = function(){
+    auth.logIn($scope.user).error(function(error){
+      $scope.error = error;
+    }).then(function(){
+      $state.go('home');
+    });
+  };
+}])
+
+
+freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', function ($scope,$http,freezers,auth) {
+
+	$scope.isLoggedIn = auth.isLoggedIn;
 	$scope.freezers = freezers.freezers;
 	
 
@@ -184,7 +299,12 @@ $scope.update_freezer = function() {
 
 
 
-
+freezerApp.controller('NavCtrl', ['$scope', 'auth',
+function($scope, auth) {
+	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.currentUser = auth.currentUser;
+	$scope.logOut = auth.logOut;
+}]);
 
 
 

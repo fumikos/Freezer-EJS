@@ -11,6 +11,31 @@ var User = mongoose.model('User');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
+//Middleware to check user group for admin status
+var needsAdmin = function() {
+  return function(req, res, next) {
+
+    var user = User.find({username: req.payload.username}, function(err, user){
+    if(err){ return next(err); }
+
+    console.log(user[0].admin);
+
+    if (user[0].admin === true)
+      next();
+    else
+      return res.status(401).json({message: 'Unauthorized'});
+
+    
+  });
+
+
+    
+
+    
+  };
+};
+
+
 
 
 /* GET home page. */
@@ -48,10 +73,14 @@ router.post('/login', function(req, res, next){
   passport.authenticate('local', function(err, user, info){
     if(err){ return next(err); }
 
-    if(user){
+    
+
+    if(user.approved){
+      
       return res.json({token: user.generateJWT()});
     } else {
-      return res.status(401).json(info);
+
+      return res.status(401).json({message: 'Pending user approval'});
     }
   })(req, res, next);
 });
@@ -62,9 +91,20 @@ router.post('/login', function(req, res, next){
 
 
 
+//Get list of users for admin page
+router.get('/users', auth, needsAdmin(),  function(req, res, next) {
+  User.find(function(err, users){
+    if(err){ return next(err); }
+
+    res.json(users);
+  });
+});
 
 
-router.get('/freezers', function(req, res, next) {
+router.get('/freezers', auth, function(req, res, next) {
+  console.log(req.payload);
+
+  
   Freezer.find(function(err, freezers){
     if(err){ return next(err); }
 
@@ -74,15 +114,19 @@ router.get('/freezers', function(req, res, next) {
 
 
 
+
+ 
+
 router.post('/freezers', auth, function(req, res, next) {
   var freezer = new Freezer(req.body);
+  
 
   freezer.author = req.payload.username;
 
   freezer.save(function(err, freezer){
     if(err){ return next(err); }
 
-    //console.log(freezer);
+    
 
     res.json(freezer);
   });
@@ -126,8 +170,7 @@ router.post('/freezers', auth, function(req, res, next) {
 
  //var freezer = new Freezer(req.body);
  
- console.log(req.body);
- console.log(req.body._id);
+ 
  var query = {_id : req.body._id}
 
 

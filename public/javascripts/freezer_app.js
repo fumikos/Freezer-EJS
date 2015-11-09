@@ -12,11 +12,7 @@ function($stateProvider, $urlRouterProvider) {
       url: '/home',
       templateUrl: '/partials/home.html',
       controller: 'freezerCtrl',
-      resolve: {
-    	freezerPromise: ['freezers', function(freezers){
-      return freezers.getAll();
-    		}]
-  		}
+      
       
       
     });
@@ -44,17 +40,30 @@ function($stateProvider, $urlRouterProvider) {
   controller: 'AuthCtrl',
   onEnter: ['$state', 'auth', function($state, auth){
     if(auth.isLoggedIn()){
-      $state.go('home');
+      $state.go('freezers');
     }
   }]
 })
+    $stateProvider
 .state('register', {
   url: '/register',
   templateUrl: '/partials/register.html',
   controller: 'AuthCtrl',
   onEnter: ['$state', 'auth', function($state, auth){
     if(auth.isLoggedIn()){
-      $state.go('home');
+      $state.go('freezers');
+    }
+  }]
+});
+
+$stateProvider
+.state('administration', {
+  url: '/administration',
+  templateUrl: '/partials/administration.html',
+  controller: 'AuthCtrl',
+  onEnter: ['$state', 'auth', function($state, auth){
+    if(auth.isLoggedIn()){
+      $state.go('administration');
     }
   }]
 });
@@ -77,7 +86,9 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
 
 
   o.getAll = function() {
-    return $http.get('/freezers').success(function(data){
+    return $http.get('/freezers', {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
       angular.copy(data, o.freezers);
     });
   }; 
@@ -216,7 +227,7 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('home');
+      $state.go('freezer');
     });
   };
 
@@ -224,7 +235,7 @@ function($scope, $state, auth){
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('home');
+      $state.go('freezer');
     });
   };
 }])
@@ -242,7 +253,8 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     'floor':'Floor',
     'room':'Room',
     'shelves': 0,
-    'racks': 0
+    'racks': 0,
+    'author':"author"
 
 
 	};

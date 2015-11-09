@@ -3,10 +3,12 @@ var mongoose = require('mongoose');
 var FreezerSchema = new mongoose.Schema({
   freezername: String,
   building: String,
-  floor: {type: Number, default: 0},
-  room: {type: Number, default: 0},
-  shelves: {type: Number, default: 0},
-  racks: {type: Number, default: 0}
+  floor: {type: String},
+  room: {type: String},
+  shelves: {type: String},
+  racks: {type: String},
+  author: String,
+  date_created: { type: Date, default: Date.now }
 });
 
 mongoose.model('Freezer', FreezerSchema);

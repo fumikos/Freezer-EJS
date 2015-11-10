@@ -17,7 +17,7 @@ mongoose.connect('mongodb://localhost/freezers');
 
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+
 
 var app = express();
 
@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 app.use('/', routes);
-//app.use('/users', users);
+
 
 
 

@@ -11,32 +11,6 @@ var User = mongoose.model('User');
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 
-//Middleware to check user group for admin status
-var needsAdmin = function() {
-  return function(req, res, next) {
-
-    var user = User.find({username: req.payload.username}, function(err, user){
-    if(err){ return next(err); }
-
-    console.log(user[0].admin);
-
-    if (user[0].admin === true)
-      next();
-    else
-      return res.status(401).json({message: 'Unauthorized'});
-
-    
-  });
-
-
-    
-
-    
-  };
-};
-
-
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -59,7 +33,7 @@ router.post('/register', function(req, res, next){
   user.save(function (err){
     if(err){ return next(err); }
 
-    return res.json({token: user.generateJWT()})
+    return res.json({message: 'Pending user approval'})
   });
 });
 
@@ -91,18 +65,40 @@ router.post('/login', function(req, res, next){
 
 
 
-//Get list of users for admin page
-router.get('/users', auth, needsAdmin(),  function(req, res, next) {
+router.get('/admin/users', auth, function(req, res, next) {
+
+  
+
+  if (req.payload.admin){
+
   User.find(function(err, users){
     if(err){ return next(err); }
 
-    res.json(users);
+    var user_list = [];
+
+    for (i = 0; i < users.length; i++){
+
+      user_list.push({"username": users[i].username, "admin": users[i].admin, "approved": users[i].approved})
+
+    };
+
+    
+
+    res.json(user_list);
   });
+
+}
+else{
+
+  return res.status(401).json({message: 'Unauthorized'});
+
+};
 });
 
 
 router.get('/freezers', auth, function(req, res, next) {
-  console.log(req.payload);
+
+  
 
   
   Freezer.find(function(err, freezers){
@@ -119,6 +115,8 @@ router.get('/freezers', auth, function(req, res, next) {
 
 router.post('/freezers', auth, function(req, res, next) {
   var freezer = new Freezer(req.body);
+
+  
   
 
   freezer.author = req.payload.username;

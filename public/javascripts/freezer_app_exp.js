@@ -7,7 +7,7 @@ freezerApp.config([
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
 
-  $stateProvider
+	$stateProvider
     .state('home', {
       url: '/home',
       templateUrl: '/partials/home.html',
@@ -26,10 +26,10 @@ function($stateProvider, $urlRouterProvider) {
       templateUrl: 'partials/freezers.html',
       controller: 'freezerCtrl',
       resolve: {
-      freezerPromise: ['freezers', function(freezers){
+    	freezerPromise: ['freezers', function(freezers){
       return freezers.getAll();
-        }]
-      }
+    		}]
+  		}
       
     });
 
@@ -56,23 +56,23 @@ function($stateProvider, $urlRouterProvider) {
   }]
 });
 
-$stateProvider
+/*$stateProvider
 .state('administration', {
-  url: '/admin',
+  url: '/administration',
   templateUrl: '/partials/admin.html',
-  controller: 'adminCtrl',
+  controller: 'freezerCtrl',
   resolve: {
-      adminPromise: ['admin', function(admin){
-      return admin.getAll();
-        }]
-      }
+    	userPromise: ['users', function(users){
+      return users.getAll();
+    		}]
+  		}
 });
 
 
 
 
   $urlRouterProvider.otherwise('home');
-}]);
+}]);*/
 
 
 
@@ -95,60 +95,60 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
 
 
 
-   o.create_freezer = function(freezer) {
-    return $http.post('/freezers', freezer, {
+	 o.create_freezer = function(freezer) {
+	  return $http.post('/freezers', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
-      o.freezers.push(data);
-    });
-  };
+	    o.freezers.push(data);
+	  });
+	};
 
 
-  o.update_freezer = function(freezer) {
-    return $http.post('/update_freezers', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-
-     
-
-      
-      
-
-      
-    });
-  };
-
-  o.delete_freezer = function(freezer) {
-    return $http.post('/delete_freezers', freezer, {
+	o.update_freezer = function(freezer) {
+	  return $http.post('/update_freezers', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
 
+	  	console.log(data.ok);
 
-      
-      if (data.ok === 1 && data.n === 1){
+	  	
+	  	
 
+	    
+	  });
+	};
 
-
-        
-
-        var index = o.freezers.indexOf(freezer);
-        o.freezers.splice(index,1);
-
-        
-      }
-
-      
-      
+	o.delete_freezer = function(freezer) {
+	  return $http.post('/delete_freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
 
 
-      
-      
-      
-      
-    });
-  };
+	  	
+	  	if (data.ok === 1 && data.n === 1){
 
-  
+
+
+	  		
+
+	  		var index = o.freezers.indexOf(freezer);
+	  		o.freezers.splice(index,1);
+
+	  		
+	  	}
+
+	  	
+	  	
+
+
+	  	
+	  	
+	  	
+	    
+	  });
+	};
+
+	
 
  
 
@@ -159,38 +159,28 @@ return o;
 
 
 
-freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
-   var o = {
 
-    user_list: []
-   };
+/*freezerApp.factory('users', ['$http', 'auth', function($http,auth){
+  var o = {
+    users: []
+  };
 
-   o.getAll = function() {
-    return $http.get('/admin/users', {
+
+  o.get_users = function(freezer) {
+	  return $http.get('/users', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
-      angular.copy(data, o.user_list);
-    });
-  }; 
 
-   return o;
-}]);
+  	angular.copy(data, o.users);
 
 
+	};
 
+};
 
+return o;
 
-
-
-
-
-
-
-
-
-
-
-
+}]);*/
 
 
 
@@ -215,38 +205,6 @@ auth.isLoggedIn = function(){
   } else {
     return false;
   }
-};
-
-auth.isAdmin = function(){
-
-  var token = auth.getToken();
-
-  if(token){
-
-    var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-    console.log(payload);
-
-
-
-
-  };
-  
-if(payload.admin === true){
-
-  return true;
-}
-
-
-
-
-
-
-
-
-
-
-
 };
 
 
@@ -309,15 +267,26 @@ function($scope, $state, auth){
 }])
 
 
+freezerApp.controller('adminCtrl', ['$scope', '$http', 'users', 'auth', function ($scope, $http, users, auth){
+	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.freezers = freezers.freezers;
+
+	$scope.users = users.users;
+
+
+}
+
+	]);
+
+
 freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', function ($scope,$http,freezers,auth) {
 
-  $scope.isLoggedIn = auth.isLoggedIn;
-  $scope.freezers = freezers.freezers;
-  
-  
+	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.freezers = freezers.freezers;
+	
 
-  $scope.freezer = 
-  {'freezername':'Freezer Name',
+	$scope.freezer = 
+	{'freezername':'Freezer Name',
     'building':'Building',
     'floor':'Floor',
     'room':'Room',
@@ -326,13 +295,13 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     'author':"author"
 
 
-  };
+	};
 
-  $scope.default_freezer = $scope.freezers[0];
+	$scope.default_freezer = $scope.freezers[0];
 
 $scope.add_freezer = function() {
-  
-  freezers.create_freezer($scope.freezer);
+	
+	freezers.create_freezer($scope.freezer);
 
 
 
@@ -341,8 +310,8 @@ $scope.add_freezer = function() {
 };
 
 $scope.delete_freezer = function() {
-  
-  freezers.delete_freezer($scope.default_freezer);
+	
+	freezers.delete_freezer($scope.default_freezer);
 
 
 
@@ -352,8 +321,8 @@ $scope.delete_freezer = function() {
 
 
 $scope.update_freezer = function() {
-  
-  freezers.update_freezer($scope.default_freezer);
+	
+	freezers.update_freezer($scope.default_freezer);
 
 
 
@@ -382,18 +351,10 @@ $scope.update_freezer = function() {
 
 freezerApp.controller('NavCtrl', ['$scope', 'auth',
 function($scope, auth) {
-  $scope.isLoggedIn = auth.isLoggedIn;
-  $scope.currentUser = auth.currentUser;
-  $scope.logOut = auth.logOut;
-  $scope.isAdmin = auth.isAdmin;
-
+	$scope.isLoggedIn = auth.isLoggedIn;
+	$scope.currentUser = auth.currentUser;
+	$scope.logOut = auth.logOut;
 }]);
 
-freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
-function($scope, $http, admin, auth) {
-  $scope.user_list = admin.user_list;
-
-
-}]);
 
 

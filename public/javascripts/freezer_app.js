@@ -180,14 +180,48 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
 
+
+  })
+};
+
+      o.delete_user = function(user) {
+    return $http.post('/admin/delete_users', user, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+
+      console.log(data.ok);
+
+      
+      if (data.ok === 1 && data.n === 1){
+
+
+
+        
+
+        var index = o.user_list.indexOf(user);
+        o.user_list.splice(index,1);
+
+        
+      }
+
+      
+      
+
+
+      
+      
+      
+      
+    });
+  };
+
      
 
       
       
 
       
-    });
-  };
+   
 
    return o;
 }]);
@@ -425,6 +459,16 @@ function($scope, $http, admin, auth) {
   $scope.edit_user = function() {
   
   admin.edit_user($scope.default_user);
+
+
+
+
+
+};
+
+$scope.delete_user = function() {
+  
+  admin.delete_user($scope.default_user);
 
 
 

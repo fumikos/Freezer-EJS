@@ -45,6 +45,7 @@ router.post('/login', function(req, res, next){
   }
 
   passport.authenticate('local', function(err, user, info){
+  	console.log(user);
     if(err){ return next(err); }
 
     
@@ -129,6 +130,38 @@ if(req.payload.admin){
 
   });
 
+
+}
+else{
+
+  return res.status(401).json({message: 'Unauthorized'});
+
+
+};
+
+});
+
+
+router.post('/admin/delete_users', auth, function(req, res, next) {
+
+if(req.payload.admin){
+
+	console.log(req.body);
+
+
+  var query = {_id : req.body._id}
+
+
+  
+ 
+User.remove(query, function (err,removed) {
+  if (err) return err;
+
+  
+
+  res.json(removed);
+  
+});
 
 }
 else{

@@ -1,3 +1,11 @@
 Admin page:
 
 Create admin page to approve and disapprove of new users before they can view freezers. Changes made to user schema to add "admin" and "approved" status
+
+
+
+
+
+Security:
+
+Implement SSL/TLS

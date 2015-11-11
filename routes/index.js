@@ -78,7 +78,7 @@ router.get('/admin/users', auth, function(req, res, next) {
 
     for (i = 0; i < users.length; i++){
 
-      user_list.push({"username": users[i].username, "admin": users[i].admin, "approved": users[i].approved})
+      user_list.push({"_id":users[i]._id, "username": users[i].username, "admin": users[i].admin, "approved": users[i].approved})
 
     };
 
@@ -94,6 +94,55 @@ else{
 
 };
 });
+
+
+
+
+router.post('/admin/users', auth, function(req, res, next) {
+
+if(req.payload.admin){
+
+
+  
+
+
+  var conditions = {_id : req.body._id};
+
+  console.log(conditions);
+
+  var update = {$set : {
+
+    admin : req.body.admin,
+    approved: req.body.approved
+
+
+  }};
+
+
+
+ User.update(conditions, update, function(err, user){
+    if(err){ return next(err); }
+
+    
+
+    res.json(user);
+
+  });
+
+
+}
+else{
+
+  return res.status(401).json({message: 'Unauthorized'});
+
+
+};
+
+});
+
+
+
+
 
 
 router.get('/freezers', auth, function(req, res, next) {

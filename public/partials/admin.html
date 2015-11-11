@@ -1,19 +1,52 @@
 <div class="page-header">
-    <h1>Administration</h1>
+    <h1 align="center">Administration</h1>
 
-    <h2>Unapproved Users:</h2>
-
-    <a href="">Approve User</a>
+  
 
 
-    <h2>Approved Users:</h2>
-    <a href="">Remove User</a>
 
-    <!--"Admin" Checkbox -->
-    <h1>User List</h1>
-    {{user_list}}
 
- 
+
+<div class="container-fluid">
+    <row>
+
+    <div class="col-md-12">
+
+
+    <h2>Edit User</h2>
+
+    <p>Select User: </p><select ng-model="default_user" ng-options="user.username for user in user_list" ></select>
+
+    <div><label for="a">Administrator </label><input type="checkbox" id="a" ng-model="default_user.admin" ng-true-value="true" ng-false-value="false"></div>
+    <div><label for="b">Approved </label><input type="checkbox" id = "b" ng-model="default_user.approved" ng-true-value="true" ng-false-value="false"></div>
+
+   
+    <button class="btn btn-default" role="button" ng-click="edit_user()">Save Changes</button>
+
+    
+
+
+    <h2>Unapproved Users</h2>
+
+
+     
+
+     <table class="table">
+        <thead><th>Username</th><th>Administrator</th><th>Approved</th></thead>
+        <tr ng-repeat="user in user_list" ng-hide="user.approved"><td>{{user.username}}</td><td>{{user.admin}}</td><td>{{user.approved}}</td></tr>
+
+    
+
+
+    </table>
+
+    
+
+
+
+
+</div>
+
 
 
 

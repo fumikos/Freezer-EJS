@@ -11,7 +11,6 @@ function($stateProvider, $urlRouterProvider) {
     .state('home', {
       url: '/home',
       templateUrl: '/partials/home.html',
-      controller: 'freezerCtrl',
       
       
       
@@ -163,6 +162,8 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
    var o = {
 
     user_list: []
+
+
    };
 
    o.getAll = function() {
@@ -172,6 +173,21 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
       angular.copy(data, o.user_list);
     });
   }; 
+
+
+  o.edit_user = function(user) {
+    return $http.post('/admin/users', user, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+
+     
+
+      
+      
+
+      
+    });
+  };
 
    return o;
 }]);
@@ -209,6 +225,9 @@ auth.isLoggedIn = function(){
   var token = auth.getToken();
 
   if(token){
+
+    console.log(token);
+    
     var payload = JSON.parse($window.atob(token.split('.')[1]));
 
     return payload.exp > Date.now() / 1000;
@@ -225,17 +244,23 @@ auth.isAdmin = function(){
 
     var payload = JSON.parse($window.atob(token.split('.')[1]));
 
-    console.log(payload);
+    console.log(payload.admin);
 
-
-
-
-  };
-  
-if(payload.admin === true){
+    if(payload.admin === true){
 
   return true;
 }
+
+
+  };
+
+
+
+
+
+
+
+
 
 
 
@@ -392,6 +417,20 @@ function($scope, auth) {
 freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
 function($scope, $http, admin, auth) {
   $scope.user_list = admin.user_list;
+
+  
+
+  $scope.default_user = $scope.user_list[0];
+
+  $scope.edit_user = function() {
+  
+  admin.edit_user($scope.default_user);
+
+
+
+
+
+};
 
 
 }]);

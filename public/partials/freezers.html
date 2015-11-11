@@ -67,7 +67,7 @@
 
     <h1>Edit/Delete Freezer</h1>
 
-    <p>Select Freezer: </p><select ng-mofreezersdel="default_freezer" ng-options="freezer.freezername for freezer in freezers" ></select>
+    <p>Select Freezer: </p><select ng-model="default_freezer" ng-options="freezer.freezername for freezer in freezers" ></select>
 
     <input type="text" name="input" ng-model="default_freezer.freezername" ng-click="freezer.freezername = ''" placeholder="Freezer Name">
     <input type="text" name="input" ng-model="default_freezer.building" ng-click="freezer.building = ''" placeholder="Building">

@@ -94,11 +94,12 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
 
 
 
-   o.create_freezer = function(freezer) {
+   o.create_freezer = function(freezer,callback) {
     return $http.post('/freezers', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
       o.freezers.push(data);
+      callback();
     });
   };
 
@@ -117,10 +118,12 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     });
   };
 
-  o.delete_freezer = function(freezer) {
+  o.delete_freezer = function(freezer,callback) {
     return $http.post('/delete_freezers', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
+
+    
 
 
       
@@ -136,7 +139,7 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
         
       }
 
-      
+      callback();
       
 
 
@@ -189,7 +192,7 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
 
-      console.log(data.ok);
+     
 
       
       if (data.ok === 1 && data.n === 1){
@@ -260,7 +263,7 @@ auth.isLoggedIn = function(){
 
   if(token){
 
-    console.log(token);
+   
     
     var payload = JSON.parse($window.atob(token.split('.')[1]));
 
@@ -278,7 +281,7 @@ auth.isAdmin = function(){
 
     var payload = JSON.parse($window.atob(token.split('.')[1]));
 
-    console.log(payload.admin);
+    
 
     if(payload.admin === true){
 
@@ -391,7 +394,12 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 $scope.add_freezer = function() {
   
-  freezers.create_freezer($scope.freezer);
+  freezers.create_freezer($scope.freezer,function(){
+
+    
+
+    $scope.default_freezer = $scope.freezers[$scope.freezers.length-1];
+  });
 
 
 
@@ -400,8 +408,21 @@ $scope.add_freezer = function() {
 };
 
 $scope.delete_freezer = function() {
+
+  var index = $scope.freezers.indexOf($scope.default_freezer);
+  console.log(index);
   
-  freezers.delete_freezer($scope.default_freezer);
+  freezers.delete_freezer($scope.default_freezer, function(){
+
+    
+   
+    if(index===0){
+      $scope.default_freezer = $scope.freezers[index]
+
+    }
+
+    else{$scope.default_freezer = $scope.freezers[index-1];}
+  });
 
 
 

@@ -17,6 +17,10 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Lab' });
 });
 
+// GET admin page. Need to build
+/*router.get('/admin', function(req, res, next) {
+  res.render('admin', { title: 'Administration' });
+});*/
 
 
 router.post('/register', function(req, res, next){

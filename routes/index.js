@@ -198,7 +198,7 @@ router.get('/freezers', auth, function(req, res, next) {
 
 
  
-
+//Create a new freezer
 router.post('/freezers', auth, function(req, res, next) {
   var freezer = new Freezer(req.body);
 
@@ -216,6 +216,104 @@ router.post('/freezers', auth, function(req, res, next) {
   });
 });
 
+router.post('/add_shelf', function(req, res, next) {
+
+  
+  var shelf = req.body.shelf
+  var shelfname = req.body.shelf.shelfname;
+
+  console.log(shelf);
+
+  
+  var conditions = {_id : req.body._id};
+console.log(conditions);
+
+  Freezer.update(conditions,{$push : {shelves : {"shelfname": shelfname, "racks" : []}}}, function(err,doc){
+
+    console.log(doc);
+  })
+
+
+
+
+});
+
+
+router.post('/add_rack', function(req, res, next) {
+
+  console.log(req.body);
+  var rackname = req.body.rackname
+  var shelfname = req.body.rack.shelfname;
+  var columns = req.body.rack.columns
+  var rows = req.body.rack.rows
+
+  var conditions = {_id : req.body._id};
+
+  
+
+  //Find index of shelf in freezer
+
+  Freezer.find(conditions, 'shelves', function(err,shelves){
+    
+    var shelves = shelves[0].shelves;
+
+    
+    for(i = 0; i < shelves.length; i++){
+
+      if (shelves[i].shelfname === shelfname){
+
+        var shelfindex = i;
+
+        console.log(shelfindex)
+
+        //Add rack to shelf with shelfindex !!! DOES NOT WORK 11/22/15
+
+        /*Freezer.update(conditions, {$push: {shelves[shelfindex].racks : "ALA MODE"}}, function (err, doc){
+
+          console.log(doc);
+        })*/
+
+
+
+
+      }
+
+    }
+
+  })
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
  router.post('/update_freezers', auth, function(req, res, next) {
@@ -231,9 +329,7 @@ router.post('/freezers', auth, function(req, res, next) {
   	freezername: req.body.freezername,
   	building : req.body.building,
   	floor : req.body.floor,
-  	room : req.body.room,
-  	shelves : req.body.shelves,
-  	racks: req.body.racks
+  	room : req.body.room
 
 
   }};

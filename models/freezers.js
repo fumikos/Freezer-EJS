@@ -5,11 +5,11 @@ var FreezerSchema = new mongoose.Schema({
   building: String,
   floor: {type: String},
   room: {type: String},
-  shelves: {type: String},
-  racks: {type: String},
+  shelves: [],
   author: String,
   date_created: { type: Date, default: Date.now }
-});
+}, { strict: false });
+
 
 mongoose.model('Freezer', FreezerSchema);
 

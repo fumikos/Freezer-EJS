@@ -103,18 +103,39 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     });
   };
 
+  o.add_shelf = function(freezer,shelf) {
+
+    freezer.shelf = shelf;
+   
+
+    return $http.post('/add_shelf', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
+  o.add_rack = function(freezer,rack) {
+
+    freezer.rack = rack;
+
+
+    return $http.post('/add_rack', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
+
+
+
 
   o.update_freezer = function(freezer) {
     return $http.post('/update_freezers', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
-
-     
-
-      
-      
-
-      
+  
     });
   };
 
@@ -255,7 +276,11 @@ freezerApp.factory('auth', ['$http', '$window', function($http, $window){
 };
 
 auth.getToken = function (){
+
+
+
   return $window.localStorage['freezer-app-token'];
+
 };
 
 auth.isLoggedIn = function(){
@@ -376,15 +401,28 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.freezers = freezers.freezers;
   
-  
+  $scope.shelf = {
+
+    'shelfname':'name'
+  };
+
+  $scope.rack = {
+
+    'shelfname':'name',
+    'rackname':'name',
+    'columns':0,
+    'rows':0,
+    'spaces':[]
+
+  };
+
 
   $scope.freezer = 
   {'freezername':'Freezer Name',
     'building':'Building',
     'floor':'Floor',
     'room':'Room',
-    'shelves': 0,
-    'racks': 0,
+    'shelves': [],
     'author':"author"
 
 
@@ -400,6 +438,22 @@ $scope.add_freezer = function() {
 
     $scope.default_freezer = $scope.freezers[$scope.freezers.length-1];
   });
+
+};
+
+  $scope.add_shelf = function() {
+  
+  freezers.add_shelf($scope.default_freezer,$scope.shelf);
+
+
+
+
+
+};
+
+$scope.add_rack = function() {
+  
+  freezers.add_rack($scope.default_freezer,$scope.rack);
 
 
 
@@ -441,17 +495,6 @@ $scope.update_freezer = function() {
 
 };
 
-  
-    
-
-
-    
-
-
-
-  
-
-  
 
   
 

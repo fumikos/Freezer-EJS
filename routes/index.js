@@ -10,6 +10,13 @@ var User = mongoose.model('User');
 
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
+var mongodb = require('mongodb');
+var MongoClient = mongodb.MongoClient;
+
+var url = 'mongodb://localhost:27017/freezers';
+
+
+
 
 
 /* GET home page. */
@@ -190,6 +197,10 @@ router.get('/freezers', auth, function(req, res, next) {
   Freezer.find(function(err, freezers){
     if(err){ return next(err); }
 
+    console.log(freezers)
+
+    console.log(JSON.stringify(freezers,null,2));
+
     res.json(freezers);
   });
 });
@@ -221,17 +232,77 @@ router.post('/add_shelf', function(req, res, next) {
   
   var shelf = req.body.shelf
   var shelfname = req.body.shelf.shelfname;
+  var _id = req.body._id;
 
-  console.log(shelf);
+  var ObjectId = require('mongodb').ObjectID;
 
-  
-  var conditions = {_id : req.body._id};
+
+
+
+  var conditions = {"_id" : ObjectId(_id)} ;
+
 console.log(conditions);
 
-  Freezer.update(conditions,{$push : {shelves : {"shelfname": shelfname, "racks" : []}}}, function(err,doc){
 
-    console.log(doc);
-  })
+  
+
+
+//begin mongoclient.connect function
+  MongoClient.connect(url, function (err, db) {
+
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    //HURRAY!! We are connected. :)
+    console.log('Connection established to', url);
+    
+
+    // Add shelf object
+
+    /* 
+
+    shelves : {
+
+      shelf_1: {shelfname: shelf_1, racks : {rack_1: {}}}
+    } 
+
+    */
+  
+
+    var shelfObj = {};
+    shelfObj["shelfname"] = shelfname;
+    shelfObj["racks"] = {"rack_1": []};
+
+    var placeholder = ("shelves." + shelfname);
+    console.log(placeholder);
+
+    var set = {};
+    set[placeholder] = shelfObj;
+    
+    db.collection('freezers').update(conditions, {$set : set}, function (err,result){
+
+
+      console.log("done");
+
+      db.close();
+
+    })
+
+
+  };
+  
+    
+    
+
+    
+  //end of mongoclient.connect function
+
+  
+
+  });
+
+
+  
 
 
 
@@ -241,55 +312,69 @@ console.log(conditions);
 
 router.post('/add_rack', function(req, res, next) {
 
-  console.log(req.body);
+
   var rackname = req.body.rackname
   var shelfname = req.body.rack.shelfname;
   var columns = req.body.rack.columns
   var rows = req.body.rack.rows
 
-  var conditions = {_id : req.body._id};
+  var _id = req.body._id
+
+
+  var ObjectId = require('mongodb').ObjectID;
+
+
+
+
+  var conditions = {"_id" : ObjectId(_id)} ;
+
+console.log(conditions);
+
+
+
+
+
+
+  //begin mongoclient.connect function
+  MongoClient.connect(url, function (err, db) {
+
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    //HURRAY!! We are connected. :)
+    console.log('Connection established to', url);
+    
+
+    // do some work here with the database.
+
+   
+
+    db.collection('freezers').update(conditions, {$set: {"shelves" : "BLANK"}}, function (err,result){
+
+
+      console.log(JSON.stringify(result));
+
+      db.close();
+
+    })
+
+
+  };
+  
+    
+    
+
+    
+  //end of mongoclient.connect function
 
   
 
-  //Find index of shelf in freezer
-
-  Freezer.find(conditions, 'shelves', function(err,shelves){
-    
-    var shelves = shelves[0].shelves;
-
-    
-    for(i = 0; i < shelves.length; i++){
-
-      if (shelves[i].shelfname === shelfname){
-
-        var shelfindex = i;
-
-        console.log(shelfindex)
-
-        //Add rack to shelf with shelfindex !!! DOES NOT WORK 11/22/15
-
-        /*Freezer.update(conditions, {$push: {shelves[shelfindex].racks : "ALA MODE"}}, function (err, doc){
-
-          console.log(doc);
-        })*/
+  });
 
 
-
-
-      }
-
-    }
-
-  })
-
-
-
-
-
+  
 
 });
-
-
 
 
 

@@ -88,6 +88,7 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     return $http.get('/freezers', {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
+      
       angular.copy(data, o.freezers);
     });
   }; 
@@ -422,7 +423,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     'building':'Building',
     'floor':'Floor',
     'room':'Room',
-    'shelves': [],
+    'shelves': {},
     'author':"author"
 
 

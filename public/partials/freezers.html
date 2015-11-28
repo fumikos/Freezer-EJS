@@ -87,12 +87,13 @@
 
     <p>Select Shelf To Add Rack To: </p><select ng-model="rack.shelfname" ng-options="shelf.shelfname as shelf.shelfname for shelf in default_freezer.shelves"></select>
 
-    {{rack}}
+    {{default.freezer}}
     <input type="text" name="input" ng-model="rack.rackname" ng-click=" = ''" placeholder="Rack Name">
     <input type="text" name="input" ng-model="rack.rows" ng-click=" = ''" placeholder="Rack Rows">
     <input type="text" name="input" ng-model="rack.columns" ng-click=" = ''" placeholder="Rack Columns">
     <p>Rack Spaces : </p>{{rack.columns * rack.rows}}
     <button class="btn btn-default" role="button" ng-click="add_rack()" ng-show="isLoggedIn()">Add Rack to Shelf</button>
+    {{rack}}
     
 
 

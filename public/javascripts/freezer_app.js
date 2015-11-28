@@ -106,6 +106,8 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
 
   o.add_shelf = function(freezer,shelf) {
 
+    //add shelf property to freezer object
+
     freezer.shelf = shelf;
    
 
@@ -411,11 +413,47 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
     'shelfname':'name',
     'rackname':'name',
-    'columns':0,
     'rows':0,
-    'spaces':[]
+    'columns':0,
+    
+    'spaces':  {}
+
 
   };
+
+  //Need to implement so that for loop runs when data in $scope.rack changes (two way data binding)
+
+
+  $scope.$watchCollection('[rack.rows,rack.columns]', function(){
+    $scope.rack.spaces = {};
+
+    for(var i = 0; i < $scope.rack.rows; i++){
+
+  var rowName = "row" + String.fromCharCode(i+65);
+
+  $scope.rack.spaces[rowName] = {};
+
+  for(var j = 0; j < $scope.rack.columns; j++){
+
+    var columnName = "column" + (j + 1);
+
+
+    $scope.rack.spaces[rowName][columnName] = {};
+
+
+  };
+
+  };
+
+
+
+
+
+
+  })
+  
+
+  
 
 
   $scope.freezer = 

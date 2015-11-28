@@ -56,7 +56,7 @@ router.post('/login', function(req, res, next){
   }
 
   passport.authenticate('local', function(err, user, info){
-  	console.log(user);
+  	//console.log(user);
     if(err){ return next(err); }
 
     
@@ -120,7 +120,7 @@ if(req.payload.admin){
 
   var conditions = {_id : req.body._id};
 
-  console.log(conditions);
+  //console.log(conditions);
 
   var update = {$set : {
 
@@ -157,7 +157,7 @@ router.post('/admin/delete_users', auth, function(req, res, next) {
 
 if(req.payload.admin){
 
-	console.log(req.body);
+	//console.log(req.body);
 
 
   var query = {_id : req.body._id}
@@ -240,10 +240,6 @@ router.post('/add_shelf', function(req, res, next) {
 
 
   var conditions = {"_id" : ObjectId(_id)} ;
-
-console.log(conditions);
-
-
   
 
 
@@ -258,26 +254,21 @@ console.log(conditions);
     
 
     // Add shelf object
-
-    /* 
-
-    shelves : {
-
-      shelf_1: {shelfname: shelf_1, racks : {rack_1: {}}}
-    } 
-
-    */
   
-
+    //Dynamically create a shelf field in "shelves" object
     var shelfObj = {};
+
+
     shelfObj["shelfname"] = shelfname;
-    shelfObj["racks"] = {"rack_1": []};
+    shelfObj["racks"] = {};
 
     var placeholder = ("shelves." + shelfname);
-    console.log(placeholder);
+   
 
     var set = {};
     set[placeholder] = shelfObj;
+
+
     
     db.collection('freezers').update(conditions, {$set : set}, function (err,result){
 
@@ -312,11 +303,16 @@ console.log(conditions);
 
 router.post('/add_rack', function(req, res, next) {
 
+  console.log(req.body);
 
-  var rackname = req.body.rackname
+  var rackname = req.body.rack.rackname;
   var shelfname = req.body.rack.shelfname;
-  var columns = req.body.rack.columns
-  var rows = req.body.rack.rows
+  var columns = req.body.rack.columns;
+  var rows = req.body.rack.rows;
+
+  var spaces = req.body.rack.spaces;
+
+  //console.log(req.body.rack);
 
   var _id = req.body._id
 
@@ -328,7 +324,7 @@ router.post('/add_rack', function(req, res, next) {
 
   var conditions = {"_id" : ObjectId(_id)} ;
 
-console.log(conditions);
+//console.log(conditions);
 
 
 
@@ -347,12 +343,38 @@ console.log(conditions);
 
     // do some work here with the database.
 
+ 
+
+    rackObj = {};
+
+    console.log("rackname in rackobj: " + rackname);
+
+    rackObj["rackname"] = rackname;
+
+    rackObj["rows"] = rows;
+
+    rackObj["columns"] = columns;
+
+    rackObj["spaces"] = spaces;
+
+    console.log(rackObj);
+
+
+    var placeholder = ("shelves" + '.' + shelfname + '.' + "racks" + "." + rackname);
+
+    console.log(placeholder);
+
+    var set = {};
+
+    set[placeholder] = rackObj;
+
+
    
 
-    db.collection('freezers').update(conditions, {$set: {"shelves" : "BLANK"}}, function (err,result){
+    db.collection('freezers').update(conditions, {$set: set}, function (err,result){
 
 
-      console.log(JSON.stringify(result));
+      //console.log(JSON.stringify(result));
 
       db.close();
 

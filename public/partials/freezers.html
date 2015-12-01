@@ -32,7 +32,7 @@
         <tr><td>{{default_freezer.freezername}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td><td>{{default_freezer.shelves.shelf_1.rack_1.contents[0]}}</td><td>{{default_freezer.racks}}</td><tr>
 
 
-{{default_freezer.shelves}}
+{{default_freezer}}
     
 
 
@@ -81,19 +81,56 @@
     <br>
     <br>
     <p>Add Shelf To Freezer: </p>
-    <input type="text" name="input" ng-model="shelf.shelfname" ng-click="shelf.shelfname = ''" placeholder="Shelf Name">
+    <input type="text" name="input" ng-model="shelf.shelf_name" ng-click="shelf.shelf_name = ''" placeholder="Shelf Name">
     <button class="btn btn-default" role="button" ng-click="add_shelf()" ng-show="isLoggedIn()">Add Shelf</button>
     <br>
+    <p>Add Rack to Shelf: </p>
+    <br>
+    <p>Select Shelf To Add Rack To: </p><select ng-model="rack.shelf_name" ng-options="shelf.shelf_name as shelf.shelf_name for shelf in default_freezer.shelves"></select>
 
-    <p>Select Shelf To Add Rack To: </p><select ng-model="rack.shelfname" ng-options="shelf.shelfname as shelf.shelfname for shelf in default_freezer.shelves"></select>
 
-    {{default.freezer}}
-    <input type="text" name="input" ng-model="rack.rackname" ng-click=" = ''" placeholder="Rack Name">
-    <input type="text" name="input" ng-model="rack.rows" ng-click=" = ''" placeholder="Rack Rows">
-    <input type="text" name="input" ng-model="rack.columns" ng-click=" = ''" placeholder="Rack Columns">
-    <p>Rack Spaces : </p>{{rack.columns * rack.rows}}
+
+    
+    <input type="text" name="input" ng-model="rack.rack_name" ng-click=" = ''" placeholder="Rack Name">
+    <input type="text" name="input" ng-model="rack.row_count" ng-click=" = ''" placeholder="Rack Rows">
+    <input type="text" name="input" ng-model="rack.column_count" ng-click=" = ''" placeholder="Rack Columns">
     <button class="btn btn-default" role="button" ng-click="add_rack()" ng-show="isLoggedIn()">Add Rack to Shelf</button>
-    {{rack}}
+
+    <br><br>
+
+
+
+    <p>Add Box to Rack: </p>
+    <br>
+    <p>Select Shelf To Add Box To: </p><select ng-model="box_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+
+  
+
+
+
+
+    
+    <p>Select Rack To Add Box To: </p><select ng-model="box_rack" ng-options="rack as rack.rack_name for rack in box_shelf.racks"></select>
+
+
+    <p>Select Row To Add Box To: </p><select ng-model="box_row" ng-options="row as row.row_name for row in box_rack.rows"></select>
+
+    <p>Select Column To Add Box To: </p><select ng-model="box_column" ng-options="column as column.column_name for column in box_row.columns"></select>
+
+    <input type="text" name="input" ng-model="box.box_name" ng-click=" = ''" placeholder="Box Name">
+
+   
+
+    <button class="btn btn-default" role="button" ng-click="add_box()" ng-show="isLoggedIn()">Add Box to Rack</button>
+
+
+
+
+    {{box}}
+
+
+
+
     
 
 

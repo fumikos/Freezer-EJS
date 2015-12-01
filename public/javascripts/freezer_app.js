@@ -32,6 +32,8 @@ function($stateProvider, $urlRouterProvider) {
       
     });
 
+
+
     $stateProvider
     .state('login', {
   url: '/login',
@@ -131,6 +133,21 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
   };
 
 
+  o.add_box = function(freezer,shelf,rack,box) {
+
+    freezer.shelf = shelf;
+    freezer.rack = rack;
+    freezer.box = box;
+
+
+    return $http.post('/add_box', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
+
 
 
 
@@ -148,7 +165,6 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
   }).success(function(data){
 
     
-
 
       
       if (data.ok === 1 && data.n === 1){
@@ -406,54 +422,58 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
   
   $scope.shelf = {
 
-    'shelfname':'name'
+    'shelf_name':'name'
   };
 
   $scope.rack = {
 
-    'shelfname':'name',
-    'rackname':'name',
-    'rows':0,
-    'columns':0,
-    
-    'spaces':  {}
+    'rows':{},
+    'row_count':0,
+    'column_count':0,
+
 
 
   };
 
-  //Need to implement so that for loop runs when data in $scope.rack changes (two way data binding)
+  //Watches when rack/column model of rack object changes, and updates the spaces object to reflect this
 
 
-  $scope.$watchCollection('[rack.rows,rack.columns]', function(){
-    $scope.rack.spaces = {};
+  $scope.$watchCollection('[rack.row_count,rack.column_count]', function(){
+    
+    $scope.rack.rows = {};
 
-    for(var i = 0; i < $scope.rack.rows; i++){
+    for(var i = 0; i < $scope.rack.row_count; i++){
 
   var rowName = "row" + String.fromCharCode(i+65);
 
-  $scope.rack.spaces[rowName] = {};
+  $scope.rack.rows[rowName] = {};
 
-  for(var j = 0; j < $scope.rack.columns; j++){
+  $scope.rack.rows[rowName]["row_name"] = rowName;
 
-    var columnName = "column" + (j + 1);
+  $scope.rack.rows[rowName]["columns"] = {};
+
+  
+
+  for(var j = 0; j < $scope.rack.column_count; j++){
+
+    var columnName = "column_" + (j + 1);
 
 
-    $scope.rack.spaces[rowName][columnName] = {};
+    $scope.rack.rows[rowName]["columns"][columnName] = {};
+    $scope.rack.rows[rowName]["columns"][columnName]["column_name"] = columnName;
+   
 
 
   };
 
   };
 
+  });
 
 
 
-
-
-  })
-  
-
-  
+  //new slide box model
+  $scope.box = {'box_name':'box_name'};
 
 
   $scope.freezer = 
@@ -466,6 +486,37 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 
   };
+
+
+
+
+
+
+
+
+  //watch add box attributes
+   $scope.$watchCollection('[box_shelf,box_rack,box_row,box_column]', function(){
+    
+    $scope.box.shelf_name = "";
+    $scope.box.rack_name = "";
+    $scope.box.row_name = "";
+    $scope.box.shelf_name = "";
+    $scope.box.column_name = "";
+
+
+    $scope.box.shelf_name = $scope.box_shelf.shelf_name;
+    $scope.box.rack_name = $scope.box_rack.rack_name;
+    $scope.box.row_name = $scope.box_row.row_name;
+    $scope.box.column_name = $scope.box_column.column_name;
+
+
+
+  });
+
+
+
+
+
 
   $scope.default_freezer = $scope.freezers[0];
 
@@ -499,6 +550,19 @@ $scope.add_rack = function() {
 
 
 };
+
+//add box to freezer, shelf, and rack
+$scope.add_box = function() {
+  
+  freezers.add_box($scope.default_freezer,$scope.shelf,$scope.rack, $scope.box);
+
+
+
+
+
+};
+
+
 
 $scope.delete_freezer = function() {
 

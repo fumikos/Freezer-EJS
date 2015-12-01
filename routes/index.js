@@ -6,6 +6,7 @@ var router = express.Router();
 
 var mongoose = require('mongoose');
 var Freezer = mongoose.model('Freezer');
+var slide_box_100 = mongoose.model('slide_box_100')
 var User = mongoose.model('User');
 
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
@@ -194,10 +195,12 @@ router.get('/freezers', auth, function(req, res, next) {
   
 
   
-  Freezer.find(function(err, freezers){
+  Freezer.find({},function(err, freezers){
     if(err){ return next(err); }
 
     console.log(freezers)
+
+    
 
     console.log(JSON.stringify(freezers,null,2));
 
@@ -227,11 +230,43 @@ router.post('/freezers', auth, function(req, res, next) {
   });
 });
 
-router.post('/add_shelf', function(req, res, next) {
+
+//Create a new slide box
+router.post('/100_slide_box', auth, function(req, res, next) {
+  var slide_box = new slide_box_100(req.body);
+
+  
+  
+
+  slide_box_100.author = req.payload.username;
+
+  freezer.save(function(err, freezer){
+    if(err){ return next(err); }
+
+    
+
+    res.json(freezer);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+//add new shelf to freezer
+router.post('/add_shelf', auth, function(req, res, next) {
 
   
   var shelf = req.body.shelf
-  var shelfname = req.body.shelf.shelfname;
+  var shelf_name = req.body.shelf.shelf_name;
   var _id = req.body._id;
 
   var ObjectId = require('mongodb').ObjectID;
@@ -259,10 +294,10 @@ router.post('/add_shelf', function(req, res, next) {
     var shelfObj = {};
 
 
-    shelfObj["shelfname"] = shelfname;
+    shelfObj["shelf_name"] = shelf_name;
     shelfObj["racks"] = {};
 
-    var placeholder = ("shelves." + shelfname);
+    var placeholder = ("shelves." + shelf_name);
    
 
     var set = {};
@@ -301,18 +336,19 @@ router.post('/add_shelf', function(req, res, next) {
 });
 
 
-router.post('/add_rack', function(req, res, next) {
+router.post('/add_rack', auth, function(req, res, next) {
 
   console.log(req.body);
 
-  var rackname = req.body.rack.rackname;
-  var shelfname = req.body.rack.shelfname;
-  var columns = req.body.rack.columns;
-  var rows = req.body.rack.rows;
+  var rack = req.body.rack
+  var rack_name = req.body.rack.rack_name;
+  var shelf_name = req.body.rack.shelf_name;
+  var row_count = req.body.rack.row_count;
+  var column_count = req.body.rack.column_count;
 
-  var spaces = req.body.rack.spaces;
 
-  //console.log(req.body.rack);
+  console.log("HERE IS THE RACK OBJECT")
+  console.log(req.body.rack);
 
   var _id = req.body._id
 
@@ -343,30 +379,20 @@ router.post('/add_rack', function(req, res, next) {
 
     // do some work here with the database.
 
- 
-
-    rackObj = {};
-
-    console.log("rackname in rackobj: " + rackname);
-
-    rackObj["rackname"] = rackname;
-
-    rackObj["rows"] = rows;
-
-    rackObj["columns"] = columns;
-
-    rackObj["spaces"] = spaces;
-
-    console.log(rackObj);
 
 
-    var placeholder = ("shelves" + '.' + shelfname + '.' + "racks" + "." + rackname);
 
-    console.log(placeholder);
+    var placeholder = ("shelves" + '.' + shelf_name + '.' + "racks" + "." + rack_name);
+
+    //get rid of shelf_name property of rack
+    delete rack.shelf_name;
+
+    console.log("Here is the updated rack without shelf_name:");
+    console.log(rack);
 
     var set = {};
 
-    set[placeholder] = rackObj;
+    set[placeholder] = rack;
 
 
    

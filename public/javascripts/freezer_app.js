@@ -91,6 +91,7 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
       
+
       angular.copy(data, o.freezers);
     });
   }; 
@@ -133,10 +134,8 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
   };
 
 
-  o.add_box = function(freezer,shelf,rack,box) {
+  o.add_box = function(freezer,box) {
 
-    freezer.shelf = shelf;
-    freezer.rack = rack;
     freezer.box = box;
 
 
@@ -435,7 +434,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
   };
 
-  //Watches when rack/column model of rack object changes, and updates the spaces object to reflect this
+  //Watches when rack/column model of rack object changes
 
 
   $scope.$watchCollection('[rack.row_count,rack.column_count]', function(){
@@ -473,7 +472,13 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 
   //new slide box model
-  $scope.box = {'box_name':'box_name'};
+  $scope.box = {'box_name':'box_name',
+
+  'box_ID' : {},
+
+
+
+};
 
 
   $scope.freezer = 
@@ -502,12 +507,15 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     $scope.box.row_name = "";
     $scope.box.shelf_name = "";
     $scope.box.column_name = "";
+   
 
 
     $scope.box.shelf_name = $scope.box_shelf.shelf_name;
     $scope.box.rack_name = $scope.box_rack.rack_name;
     $scope.box.row_name = $scope.box_row.row_name;
     $scope.box.column_name = $scope.box_column.column_name;
+
+
 
 
 
@@ -551,10 +559,10 @@ $scope.add_rack = function() {
 
 };
 
-//add box to freezer, shelf, and rack
+
 $scope.add_box = function() {
   
-  freezers.add_box($scope.default_freezer,$scope.shelf,$scope.rack, $scope.box);
+  freezers.add_box($scope.default_freezer,$scope.box);
 
 
 

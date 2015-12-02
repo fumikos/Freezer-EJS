@@ -432,6 +432,101 @@ router.post('/add_rack', auth, function(req, res, next) {
 
 
 
+//add_box route: need to implement 12/01/2015
+router.post('/add_box', auth, function(req, res, next) {
+
+
+
+  var shelf_name = req.body.box.shelf_name;
+  var rack_name = req.body.box.rack_name;
+  var column_name = req.body.box.column_name;
+
+  var box = req.body.box;
+
+  var _id = req.body._id
+
+
+  var ObjectId = require('mongodb').ObjectID;
+
+  var box_ID = new ObjectId;
+
+  box["box_ID"] = box_ID;
+
+  console.log(box);
+
+  var conditions = {"_id" : ObjectId(_id)} ;
+
+
+
+
+
+
+  //begin mongoclient.connect function
+  MongoClient.connect(url, function (err, db) {
+
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    //HURRAY!! We are connected. :)
+    console.log('Connection established to', url);
+    
+
+      var placeholder = ("shelves" + '.' + shelf_name + '.' + "racks" + "." + rack_name + "." + column_name);
+
+    //get rid of shelf_name property of rack
+    delete box.shelf_name;
+    delete box.rack_name;
+    delete box.row_name;
+    delete box.column_name;
+
+    console.log(box);
+
+
+
+    var set = {};
+
+    set[placeholder] = box;
+
+
+   
+
+    db.collection('freezers').update(conditions, {$set: set}, function (err,result){
+
+
+      //console.log(JSON.stringify(result));
+
+      db.close();
+
+    })
+
+   
+
+
+  };
+  
+    
+    
+
+    
+  //end of mongoclient.connect function
+
+  
+
+  });
+
+
+  
+
+});
+
+
+
+
+
+
+
+
+
 
 
 

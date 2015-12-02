@@ -28,11 +28,11 @@
     <div class="col-md-8">
 
     <table class="table">
-        <thead><th>Name</th><th>Building</th><th>Floor</th><th>Room</th><th>Shelves</th><th>Racks</th></thead>
-        <tr><td>{{default_freezer.freezername}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td><td>{{default_freezer.shelves.shelf_1.rack_1.contents[0]}}</td><td>{{default_freezer.racks}}</td><tr>
+        <thead><th>Name</th><th>Building</th><th>Floor</th><th>Room</th><th>Shelves</th></thead>
+        <tr><td>{{default_freezer.freezername}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td><td>{{default_freezer.shelves}}
 
 
-{{default_freezer}}
+
     
 
 
@@ -40,6 +40,8 @@
 
     <span><p>Freezer created by {{default_freezer.author}} ON {{default_freezer.date_created}}</p>
 </span>
+
+{{default_freezer}}
 
 
     <h1>Add Freezer</h1>

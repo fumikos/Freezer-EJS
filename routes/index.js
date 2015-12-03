@@ -290,22 +290,26 @@ router.post('/add_shelf', auth, function(req, res, next) {
 
     // Add shelf object
   
-    //Dynamically create a shelf field in "shelves" object
+    //Dynamically create a shelf field in "shelves" object array
     var shelfObj = {};
 
 
     shelfObj["shelf_name"] = shelf_name;
-    shelfObj["racks"] = {};
+    shelfObj["racks"] = [];
 
-    var placeholder = ("shelves." + shelf_name);
+    //$push: {shelves: shelfObj}
+
+    //var placeholder = ("shelves." + shelf_name);
    
 
-    var set = {};
-    set[placeholder] = shelfObj;
+    //var set = {};
+    //set[placeholder] = shelfObj;
+
+    console.log(shelfObj);
 
 
     
-    db.collection('freezers').update(conditions, {$set : set}, function (err,result){
+    db.collection('freezers').update(conditions, {$push : {shelves: shelfObj} }, function (err,result){
 
 
       console.log("done");
@@ -338,17 +342,19 @@ router.post('/add_shelf', auth, function(req, res, next) {
 
 router.post('/add_rack', auth, function(req, res, next) {
 
-  console.log(req.body);
+  //console.log(req.body);
 
+  var shelves = req.body.shelves
   var rack = req.body.rack
   var rack_name = req.body.rack.rack_name;
   var shelf_name = req.body.rack.shelf_name;
-  var row_count = req.body.rack.row_count;
-  var column_count = req.body.rack.column_count;
+
+  //delete row count and column count
+  delete rack.row_count
+  delete rack.column_count 
 
 
-  console.log("HERE IS THE RACK OBJECT")
-  console.log(req.body.rack);
+
 
   var _id = req.body._id
 
@@ -380,24 +386,37 @@ router.post('/add_rack', auth, function(req, res, next) {
     // do some work here with the database.
 
 
-
-
-    var placeholder = ("shelves" + '.' + shelf_name + '.' + "racks" + "." + rack_name);
-
     //get rid of shelf_name property of rack
     delete rack.shelf_name;
 
-    console.log("Here is the updated rack without shelf_name:");
-    console.log(rack);
 
-    var set = {};
+    console.log(shelves.length);
+
+    for(var i = 0; i < shelves.length; i ++){
+      console.log(shelves[i]);
+
+      if(shelves[i].shelf_name === shelf_name){
+
+
+        var shelf_space = i;
+        console.log("shelf space: " + shelf_space);
+
+      }
+
+    }
+
+    var set = {}
+
+    var placeholder = "shelves." + shelf_space + ".racks";
 
     set[placeholder] = rack;
 
+    
 
    
+   //pick up here 12/02/2015
 
-    db.collection('freezers').update(conditions, {$set: set}, function (err,result){
+    db.collection('freezers').update(conditions, {$push: set}, function (err,result){
 
 
       //console.log(JSON.stringify(result));
@@ -405,9 +424,10 @@ router.post('/add_rack', auth, function(req, res, next) {
       db.close();
 
     })
+      }
 
 
-  };
+  
   
     
     
@@ -436,9 +456,11 @@ router.post('/add_rack', auth, function(req, res, next) {
 router.post('/add_box', auth, function(req, res, next) {
 
 
+  var shelves = req.body.shelves
 
   var shelf_name = req.body.box.shelf_name;
   var rack_name = req.body.box.rack_name;
+  var row_name = req.body.box.row_name;
   var column_name = req.body.box.column_name;
 
   var box = req.body.box;
@@ -456,6 +478,42 @@ router.post('/add_box', auth, function(req, res, next) {
 
   var conditions = {"_id" : ObjectId(_id)} ;
 
+  for(var i = 0; i < shelves.length; i ++){
+      
+
+      if(shelves[i].shelf_name === shelf_name){
+
+
+        var shelf_space = i;
+        //console.log("shelf space: " + shelf_space);
+
+        console.log("shelf_space: " + shelf_space);
+
+        console.log("rack length: " + shelves[shelf_space].racks.length);
+
+
+
+        for(var j = 0; j < shelves[shelf_space].racks.length; j++){
+      
+
+      if(shelves[shelf_space].racks[j].rack_name === rack_name){
+
+
+        var rack_space = j;
+
+        console.log("rack_space: " + rack_space);
+        
+
+      }
+
+    }
+
+      };
+
+    }
+
+
+
 
 
 
@@ -471,7 +529,17 @@ router.post('/add_box', auth, function(req, res, next) {
     console.log('Connection established to', url);
     
 
-      var placeholder = ("shelves" + '.' + shelf_name + '.' + "racks" + "." + rack_name + "." + column_name);
+      var set = {};
+
+      console.log(shelf_space);
+
+      console.log(rack_space);
+
+      var placeholder = ("shelves" + '.' + shelf_space + '.' + "racks" + "." + rack_space + "." + row_name + "." + column_name);
+
+      //console.log(placeholder);
+
+
 
     //get rid of shelf_name property of rack
     delete box.shelf_name;
@@ -479,11 +547,11 @@ router.post('/add_box', auth, function(req, res, next) {
     delete box.row_name;
     delete box.column_name;
 
-    console.log(box);
+    
 
 
 
-    var set = {};
+    
 
     set[placeholder] = box;
 

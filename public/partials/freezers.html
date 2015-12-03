@@ -128,12 +128,44 @@
 
 
 
-    {{box}}
+     <p>Add Sample(s) to Box: </p>
+    <br>
+    <p>Select Shelf To Add Sample(s) To: </p><select ng-model="sample_shelf.shelfname" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+
+  
 
 
 
 
     
+    <p>Select Rack To Add Sample(s) To: </p><select ng-model="sample_rack.rackname" ng-options="rack as rack.rack_name for rack in sample_shelf.racks"></select>
+
+
+    <p>Select Row To Add Sample(s) To: </p><select ng-model="sample_row" ng-options="row as row.row_name for row in sample_rack.rows"></select>
+
+    <p>Select Column To Add Sample(s) To: </p><select ng-model="sample_column" ng-options="column as column.column_name for column in sample_row.columns"></select>
+
+    <p>Box in this place : </p>
+
+        {{sample_shelf}}
+
+   
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <div ng-hide="isLoggedIn()">

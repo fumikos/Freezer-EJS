@@ -486,7 +486,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     'building':'Building',
     'floor':'Floor',
     'room':'Room',
-    'shelves': {},
+    'shelves': [],
     'author':"author"
 
 

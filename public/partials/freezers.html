@@ -84,11 +84,21 @@
     <br>
     <p>Add Shelf To Freezer: </p>
     <input type="text" name="input" ng-model="shelf.shelf_name" ng-click="shelf.shelf_name = ''" placeholder="Shelf Name">
+    <input type="text" name="input" ng-model="shelf.rack_spaces" ng-click="shelf.rack_spaces = ''" placeholder="Rack Spaces">
     <button class="btn btn-default" role="button" ng-click="add_shelf()" ng-show="isLoggedIn()">Add Shelf</button>
     <br>
     <p>Add Rack to Shelf: </p>
     <br>
-    <p>Select Shelf To Add Rack To: </p><select ng-model="rack.shelf_name" ng-options="shelf.shelf_name as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+    <p>Select Shelf To Add Rack To: </p><select ng-model="rack_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+    <p>Select Shelf Position To Add Rack To: </p><select ng-model="rack_position" ng-options="rack.rack_position as (rack.rack_name + rack.rack_position) for rack in rack_shelf.racks"></select>
+
+    
+    <br>
+    <br>
+
+    {{rack_shelf}}
+    <br>
+    <br>
 
 
 
@@ -106,9 +116,6 @@
     <br>
     <p>Select Shelf To Add Box To: </p><select ng-model="box_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
 
-  
-
-
 
 
     
@@ -125,12 +132,14 @@
 
     <button class="btn btn-default" role="button" ng-click="add_box()" ng-show="isLoggedIn()">Add Box to Rack</button>
 
+    {{box}}
 
 
 
-     <p>Add Sample(s) to Box: </p>
+
+     <p>Add Slide Sample(s) to Box: </p>
     <br>
-    <p>Select Shelf To Add Sample(s) To: </p><select ng-model="sample_shelf.shelfname" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+    <p>Select Shelf To Add Sample(s) To: </p><select ng-model="sample_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
 
   
 
@@ -138,7 +147,7 @@
 
 
     
-    <p>Select Rack To Add Sample(s) To: </p><select ng-model="sample_rack.rackname" ng-options="rack as rack.rack_name for rack in sample_shelf.racks"></select>
+    <p>Select Rack To Add Sample(s) To: </p><select ng-model="sample_rack" ng-options="rack as rack.rack_name for rack in sample_shelf.racks"></select>
 
 
     <p>Select Row To Add Sample(s) To: </p><select ng-model="sample_row" ng-options="row as row.row_name for row in sample_rack.rows"></select>
@@ -147,7 +156,14 @@
 
     <p>Box in this place : </p>
 
-        {{sample_shelf}}
+ 
+    {{sample_box}}
+
+
+
+    <button class="btn btn-default" role="button" ng-click="add_slide()" ng-show="isLoggedIn()">Add Slide(s) to Box</button>
+       
+
 
    
 

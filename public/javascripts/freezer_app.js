@@ -146,6 +146,24 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     });
   };
 
+  o.add_slide = function(freezer,slide,sample_shelf,sample_rack,sample_row,sample_column,sample_quantity,sample_quantity,sample_start_space) {
+
+    freezer.slide = slide;
+    freezer.sample_shelf = sample_shelf;
+    freezer.sample_rack = sample_rack;
+    freezer.sample_row = sample_row
+    freezer.sample_column = sample_column
+    freezer.sample_quantity = sample_quantity
+    freezer.sample_start_space = sample_start_space
+
+
+    return $http.post('/add_box', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
 
 
 
@@ -421,7 +439,8 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
   
   $scope.shelf = {
 
-    'shelf_name':'name'
+    'shelf_name':'name',
+    'rack_spaces' :0
   };
 
   $scope.rack = {
@@ -429,6 +448,8 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
     'rows':{},
     'row_count':0,
     'column_count':0,
+    'rack_position': 0,
+    'shelf_name': ""
 
 
 
@@ -436,30 +457,37 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
   //Watches when rack/column model of rack object changes
 
+  $scope.$watchCollection('[rack_position, rack_shelf]', function(){
+
+    $scope.rack.rack_position = $scope.rack_position;
+    $scope.rack.shelf_name = $scope.rack_shelf.shelf_name;
+
+  });
+
 
   $scope.$watchCollection('[rack.row_count,rack.column_count]', function(){
     
-    $scope.rack.rows = {};
+    $scope.rack.rows = [];
+   
 
     for(var i = 0; i < $scope.rack.row_count; i++){
 
-  var rowName = "row" + String.fromCharCode(i+65);
+  var rowName = "row_" + String.fromCharCode(i+65);
 
-  $scope.rack.rows[rowName] = {};
+  $scope.rack.rows[i] = {};
+  $scope.rack.rows[i]["row_name"] = rowName;
 
-  $scope.rack.rows[rowName]["row_name"] = rowName;
-
-  $scope.rack.rows[rowName]["columns"] = {};
+  $scope.rack.rows[i]["columns"] = [];
 
   
 
   for(var j = 0; j < $scope.rack.column_count; j++){
 
-    var columnName = "column_" + (j + 1);
+    var column_name = "column_" + (j + 1);
 
 
-    $scope.rack.rows[rowName]["columns"][columnName] = {};
-    $scope.rack.rows[rowName]["columns"][columnName]["column_name"] = columnName;
+    $scope.rack.rows[i]["columns"][j] = {};
+    $scope.rack.rows[i]["columns"][j]["column_name"] = column_name;
    
 
 
@@ -474,7 +502,31 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
   //new slide box model
   $scope.box = {'box_name':'box_name',
 
+  'box_ID' : {}
+
+
+
+};
+
+$scope.sample_box = {};
+
+
+
+
+  $scope.slide = {'box_name':'box_name',
+
   'box_ID' : {},
+  'sample_group_name': "",
+  'sample_group_number': 1,
+  'sample_name': "String",
+  'slices_per_slide': 2,
+  'slice_spacing': 100,
+  'date_sectioned': "",
+  'date_created': "{ type: Date, default: Date.now }",
+  'author': "",
+  'slide_quantity': 1,
+  'slide_start_space': 1
+
 
 
 
@@ -521,12 +573,110 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
   });
 
+    //Recursively find location of sample box in freezer 12/08/15
+      $scope.$watchCollection('[sample_shelf,sample_rack,sample_row,sample_column]', function(){
+
+
+
+
+        
+        var freezer = $scope.default_freezer;
+
+        var levels = ['shelves','racks','rows','columns'];
+        var level_names = ['shelf_name','rack_name','row_name','column_name'];
+        var sample_names = [$scope.sample_shelf.shelf_name, $scope.sample_rack.rack_name, $scope.sample_row.row_name, $scope.sample_column.column_name];
+
+        var current_place = "";
+
+        
+      
+        var i = 0;
+        var j = 0;
+
+
+                            var findBox = function(current_place){          
+
+                      console.log(current_place)                                               
+                                
+
+                      //stopped here. can't figure out how to build address          
+                    
+                      for(var key in freezer){
+
+                        
+
+                        
+
+                        if (  freezer[levels[j]][i][level_names[j]] = sample_names[j]                   ){
+
+                          console.log(current_place)
+
+                          
+                          current_place = current_place + "." + levels[j] + "[" + i + "]";
+
+                          console.log(current_place)
+
+                                                 
+
+                          
+
+
+                          
+                          j++;
+                          i = 0;
+
+                          findBox(current_place);
+                          
+                          
+
+                        }
+
+                        /*else if(current_place[key].box_name){
+
+                          return current_place[key];
+
+                        }
+
+
+                        else{
+
+                          i++
+
+                          findBox(current_place);
+
+                        }*/
+
+
+                      };
+
+
+                      
+                    }
+        
+         
+          
+      
+    
+  findBox(current_place);
+    
+   
+
+
+
+
+
+  });
+
+
+
+
 
 
 
 
 
   $scope.default_freezer = $scope.freezers[0];
+        
 
 $scope.add_freezer = function() {
   
@@ -563,6 +713,16 @@ $scope.add_rack = function() {
 $scope.add_box = function() {
   
   freezers.add_box($scope.default_freezer,$scope.box);
+
+
+
+
+
+};
+
+$scope.add_slide = function() {
+  
+  freezers.add_box($scope.default_freezer,$scope.sample_shelf,$scope.sample_rack,$scope.sample_row,$scope.sample_column);
 
 
 

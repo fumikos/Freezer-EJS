@@ -573,7 +573,7 @@ $scope.sample_box = {};
 
   });
 
-    //Recursively find location of sample box in freezer 12/08/15
+    //Recursively find location of sample box in freezer
       $scope.$watchCollection('[sample_shelf,sample_rack,sample_row,sample_column]', function(){
 
 
@@ -582,84 +582,87 @@ $scope.sample_box = {};
         
         var freezer = $scope.default_freezer;
 
-        var levels = ['shelves','racks','rows','columns'];
-        var level_names = ['shelf_name','rack_name','row_name','column_name'];
+        var level_names = ["shelf_name", "rack_name", "row_name", "column_name"]
         var sample_names = [$scope.sample_shelf.shelf_name, $scope.sample_rack.rack_name, $scope.sample_row.row_name, $scope.sample_column.column_name];
 
-        var current_place = "";
 
         
-      
+        
         var i = 0;
-        var j = 0;
+        
+  
 
 
-                            var findBox = function(current_place){          
+                    var findBox = function(obj){
 
-                      console.log(current_place)                                               
-                                
-
-                      //stopped here. can't figure out how to build address          
-                    
-                      for(var key in freezer){
-
-                        
-
-                        
-
-                        if (  freezer[levels[j]][i][level_names[j]] = sample_names[j]                   ){
-
-                          console.log(current_place)
-
-                          
-                          current_place = current_place + "." + levels[j] + "[" + i + "]";
-
-                          console.log(current_place)
-
-                                                 
-
-                          
-
-
-                          
-                          j++;
-                          i = 0;
-
-                          findBox(current_place);
-                          
-                          
-
-                        }
-
-                        /*else if(current_place[key].box_name){
-
-                          return current_place[key];
-
-                        }
-
-
-                        else{
-
-                          i++
-
-                          findBox(current_place);
-
-                        }*/
-
-
-                      };
 
 
                       
+
+                     
+                      for (var key in obj){
+
+                        if (typeof obj[key] === 'object') {
+
+                          
+
+                          for (var subkey in obj[key]){
+
+                           
+
+                            var current_place = level_names[i]
+                            
+                            
+                           
+
+
+                            if(obj[key][subkey][current_place] === sample_names[i]){
+
+                              if(key === "box"){
+
+                                var box = (obj[key]);
+
+                              
+
+                                return box;
+
+                                
+                              }
+
+                              
+                              
+
+
+                              
+                              
+                              else{
+                              i++;
+
+                              return findBox(obj[key][subkey]);
+
+                            };
+
+                            }
+
+                          }
+
+                        
+                          
+
+                        
+
+                          }
+
+
+
                     }
-        
-         
-          
-      
-    
-  findBox(current_place);
-    
+
+                  
+
+                  }
    
+$scope.sample_box = findBox($scope.default_freezer);
+
 
 
 

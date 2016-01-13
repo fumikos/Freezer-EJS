@@ -146,18 +146,13 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     });
   };
 
-  o.add_slide = function(freezer,slide,sample_shelf,sample_rack,sample_row,sample_column,sample_quantity,sample_quantity,sample_start_space) {
+  o.add_sample = function(freezer,sample) {
 
-    freezer.slide = slide;
-    freezer.sample_shelf = sample_shelf;
-    freezer.sample_rack = sample_rack;
-    freezer.sample_row = sample_row
-    freezer.sample_column = sample_column
-    freezer.sample_quantity = sample_quantity
-    freezer.sample_start_space = sample_start_space
+    
+    freezer.sample = sample;
 
 
-    return $http.post('/add_box', freezer, {
+    return $http.post('/add_sample', freezer, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
       
@@ -513,19 +508,20 @@ $scope.sample_box = {};
 
 
 
-  $scope.slide = {'box_name':'box_name',
 
-  'box_ID' : {},
-  'sample_group_name': "",
-  'sample_group_number': 1,
-  'sample_name': "String",
-  'slices_per_slide': 2,
-  'slice_spacing': 100,
+  $scope.sample = {
+
+  'box_ID' : $scope.sample_box.boxID,
+  'group_name': "",
+  'subgroup_name': "",
+  'sample_name' : "",
+  'slices_per_slide': "",
+  'slice_spacing': "",
   'date_sectioned': "",
   'date_created': "{ type: Date, default: Date.now }",
   'author': "",
-  'slide_quantity': 1,
-  'slide_start_space': 1
+  'quantity': "",
+  'start_space': ""
 
 
 
@@ -585,6 +581,8 @@ $scope.sample_box = {};
         var level_names = ["shelf_name", "rack_name", "row_name", "column_name"]
         var sample_names = [$scope.sample_shelf.shelf_name, $scope.sample_rack.rack_name, $scope.sample_row.row_name, $scope.sample_column.column_name];
 
+       
+
 
         
         
@@ -621,6 +619,7 @@ $scope.sample_box = {};
                               if(key === "box"){
 
                                 var box = (obj[key]);
+                                $scope.sample.box_ID = box.box_ID;
 
                               
 
@@ -723,9 +722,9 @@ $scope.add_box = function() {
 
 };
 
-$scope.add_slide = function() {
+$scope.add_sample = function() {
   
-  freezers.add_box($scope.default_freezer,$scope.sample_shelf,$scope.sample_rack,$scope.sample_row,$scope.sample_column);
+  freezers.add_sample($scope.default_freezer,$scope.sample);
 
 
 

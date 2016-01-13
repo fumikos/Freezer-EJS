@@ -421,7 +421,7 @@ router.post('/add_rack', auth, function(req, res, next) {
     
 
    
-   //pick up here 12/02/2015
+  
 
     db.collection('freezers').update(conditions, {$set : set}, function (err,result){
 
@@ -463,6 +463,8 @@ router.post('/add_rack', auth, function(req, res, next) {
 router.post('/add_box', auth, function(req, res, next) {
 
 
+   var ObjectId = require('mongodb').ObjectID;
+
    console.log(req.body);
 
 
@@ -486,13 +488,15 @@ router.post('/add_box', auth, function(req, res, next) {
   var box = req.body.box;
 
   var _id = req.body._id;
+  var conditions = {"_id" : ObjectId(_id)} ;
+
 
   box.spaces = [];
 
 
 
 
-  var ObjectId = require('mongodb').ObjectID;
+ 
 
   var box_ID = new ObjectId;
 
@@ -500,7 +504,7 @@ router.post('/add_box', auth, function(req, res, next) {
 
   console.log(box);
 
-  var conditions = {"_id" : ObjectId(_id)} ;
+ 
 
   for(var i = 0; i < shelves.length; i ++){
       
@@ -619,7 +623,7 @@ router.post('/add_box', auth, function(req, res, next) {
     db.collection('freezers').update(conditions, {$set: set}, function (err,result){
 
 
-      //console.log(JSON.stringify(result));
+      console.log(result);
 
       db.close();
 
@@ -634,11 +638,13 @@ router.post('/add_box', auth, function(req, res, next) {
     
 
     
-  //end of mongoclient.connect function
-
+ 
   
 
   });
+
+   //end of mongoclient.connect function
+
 
 
   
@@ -647,119 +653,62 @@ router.post('/add_box', auth, function(req, res, next) {
 
 
 
-router.post('/add_slide', auth, function(req, res, next) {
+router.post('/add_sample', auth, function(req, res, next) {
 
+var sample = req.body.sample
 
-   console.log(req.body);
 
 
-  var shelves = req.body.shelves
+var ObjectId = require('mongodb').ObjectID;
 
 
+var box_ID = new ObjectId(sample.box_ID);
 
 
 
-  var shelf_name = req.body.box.shelf_name;
 
 
-  var rack_name = req.body.box.rack_name;
-  var row_name = req.body.box.row_name;
-  var column_name = req.body.box.column_name;
 
+var quantity = sample.quantity;
+var start_space = parseInt(sample.start_space) - 1;
 
+delete sample.quantity;
+delete sample.box_ID;
+delete sample.start_space;
 
-  //console.log(row_name,column_name)
 
-  var box = req.body.box;
 
-  var _id = req.body._id;
+var samples = [];
 
-  box.spaces = [];
 
 
+var conditions = {"_id" : box_ID} ;
 
 
-  var ObjectId = require('mongodb').ObjectID;
 
-  var box_ID = new ObjectId;
+for (var i = 0; i < quantity; i++){
 
-  box["box_ID"] = box_ID;
+  var temp_sample = {};
 
-  console.log(box);
+  //clone sample (so not passed by reference)
+  temp_sample = JSON.parse(JSON.stringify(sample))
 
-  var conditions = {"_id" : ObjectId(_id)} ;
+  temp_sample.slide_number = (i + 1);
 
-  for(var i = 0; i < shelves.length; i ++){
-      
+  
 
-      if(shelves[i].shelf_name === shelf_name){
+  samples.push(temp_sample);
 
 
-        var shelf_space = i;
-        //console.log("shelf space: " + shelf_space);
 
-        console.log("shelf_space: " + shelf_space);
+};
 
-        console.log("rack length: " + shelves[shelf_space].racks.length);
 
 
+var inserted_sample = {
 
-        for(var j = 0; j < shelves[shelf_space].racks.length; j++){
-      
-
-      if(shelves[shelf_space].racks[j].rack_name === rack_name){
-
-
-        var rack_space = j;
-
-        console.log("rack_space: " + rack_space);
-
-        for(var k = 0; k < shelves[shelf_space].racks[rack_space].rows.length; k++){
-
-
-
-          if(shelves[shelf_space].racks[rack_space].rows[k].row_name === row_name){
-
-            var row_space = k;
-
-
-            for(var l = 0; l < shelves[shelf_space].racks[rack_space].rows[row_space].columns.length; l++){
-
-
-
-          if(shelves[shelf_space].racks[rack_space].rows[row_space].columns[l].column_name === column_name){
-
-            var column_space = l;
-
-            
-
-
-
-
-
-
-
-          }
-        }
-
-
-
-
-
-
-          }
-        }
-        
-
-      }
-
-    }
-
-      };
-
-    }
-
-
+  "box_Id": box_ID
+};
 
 
 
@@ -774,71 +723,167 @@ router.post('/add_slide', auth, function(req, res, next) {
   } else {
     //HURRAY!! We are connected. :)
     console.log('Connection established to', url);
-    
 
-      var set = {};
-
-  
-
-      var placeholder = ("shelves" + '.' + shelf_space + '.' + "racks" + "." + rack_space + "." + "rows" + "." + row_space + "." + "columns" + "." + column_space + "." + "box");
-
-      console.log(placeholder);
-
-
-
-    //get rid of shelf_name property of rack
-    delete box.shelf_name;
-    delete box.rack_name;
-    delete box.row_name;
-    delete box.column_name;
-
-    
-
-
-
-    
-
-    set[placeholder] = box;
-
+    }
 
    
 
-    db.collection('freezers').update(conditions, {$set: set}, function (err,result){
+    //insert slides at designated start space
+    db.collection('boxes').findOne(conditions, function (err,box){
+
+      
+
+      if(err){
+        console.log(err)
+        db.close();
+      }
+      else if (box) {
+
+        //check if new start space has blank spaces between it and last slide, and if so fill those with 'EMPTY' value
+        
 
 
-      //console.log(JSON.stringify(result));
+        
 
-      db.close();
+
+        if(box.spaces){
+
+          var box_length = box.spaces.length;
+
+        };
+
+        
+
+
+      
+        var spaces_update;
+
+        //populate box.spaces with "EMPTY" if start_space is greater than current box array length
+        if (start_space > (box_length - 1)){
+
+          for (var j = box_length; j < start_space; j++){
+
+            box.spaces[j] = "EMPTY";
+
+
+          };
+
+          //add samples array to box.spaces
+          box.spaces = box.spaces.concat(samples);
+
+          spaces_update = box.spaces;
+
+        }
+
+        
+      //replace sample if necessary, i.e. if sample already exists in start space
+      
+      if (box.spaces[start_space]){
+
+        for(var i = start_space; i < samples.length; i++){
+
+          box.spaces[i] = samples[i];
+
+
+
+        }
+
+        spaces_update = box.spaces;
+
+      }
+      
+
+      
+
+
+
+
+  
+
+      db.collection('boxes').update(conditions, {$set: {"spaces" : spaces_update}}, function (err,result){
+
+        if(err){
+          console.log(err)
+          db.close()
+        }
+
+        else{
+          console.log("success!");
+          db.close();
+        }
+
+
+      });
+
+
+
+        
+
+
+    }
+
+    else if (start_space === 0) {
+
+      db.collection('boxes').insert({"_id" : box_ID, "spaces":samples}, function(err,result){
+
+        if(err){
+          console.log(err);
+          db.close();
+        }
+        else{
+          console.log("success!");
+          db.close();
+        }
+
+
+
+      });
+
+
+    }
+
+    //prepend samples array with 'EMPTY' values
+    else{
+
+      for (var i = 0; i < start_space; i++){
+
+        samples.unshift("EMPTY");
+
+      }
+
+    db.collection('boxes').insert({"_id" : box_ID, "spaces" : samples}, function (err,result){
+
+
+      if(err){
+        console.log(err);
+      }
+
+      else{
+        console.log("success!");
+        db.close();
+      }
+
+
 
     })
 
-   
 
-
-  };
-  
-    
-    
+    }
 
     
-  //end of mongoclient.connect function
+      
+
+    });
+
 
   
+
 
   });
 
-
-  
+  //end mongoclient.connect function
 
 });
-
-
-
-
-
-
-
-
 
 
 

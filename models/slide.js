@@ -13,7 +13,7 @@ var Slide_Schema = new Schema({
   slices_per_slide: Number,
   slice_spacing: Number,
   date_sectioned: { type: Date, default: Date.now },
-  date_created: { type: Date, default: Date.now }
+  date_created: { type: Date, default: Date.now },
   author: String
 }, { strict: true });
 

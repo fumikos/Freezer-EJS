@@ -211,6 +211,90 @@ router.get('/freezers', auth, function(req, res, next) {
 
 
 
+router.get('/box_contents/', auth, function(req, res, next) {
+
+  //get contents of box and return to user as json object
+
+  var ObjectId = require('mongodb').ObjectID;
+
+  var boxID = ObjectId(req.query.box_ID);
+
+
+
+
+
+  console.log("request received")
+
+  console.log(boxID)
+  
+
+
+  var conditions = {"_id" : boxID};
+
+
+
+  console.log(conditions);
+  
+   //begin mongoclient.connect function
+  MongoClient.connect(url, function (err, db) {
+
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    //HURRAY!! We are connected. :)
+    console.log('Connection established to', url);
+
+
+    
+    db.collection('boxes').findOne(conditions, function (err,result){
+
+      if(err){
+
+        console.log(err);
+
+        db.close();
+      }
+
+      else{
+
+        res.json(result);
+        db.close();
+      }
+      
+
+      
+
+    })
+
+
+  };
+  
+    
+    
+
+    
+  
+
+  
+
+  });
+  
+
+  //end of mongoclient.connect function
+
+  
+
+  
+
+  
+
+  
+  
+});
+
+
+
+
  
 //Create a new freezer
 router.post('/freezers', auth, function(req, res, next) {
@@ -655,7 +739,12 @@ router.post('/add_box', auth, function(req, res, next) {
 
 router.post('/add_sample', auth, function(req, res, next) {
 
+
+//create sample from req.body
 var sample = req.body.sample
+
+//Assign author to sample based on token payload
+sample.author = req.payload.username;
 
 
 
@@ -672,9 +761,20 @@ var box_ID = new ObjectId(sample.box_ID);
 var quantity = sample.quantity;
 var start_space = parseInt(sample.start_space) - 1;
 
+
+//assign create date to sample
+var date = new Date();
+var now = date.toString();
+sample.date_created = now;
+
+
+
 delete sample.quantity;
 delete sample.box_ID;
 delete sample.start_space;
+
+
+
 
 
 

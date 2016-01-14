@@ -154,7 +154,7 @@
 
     <p>Select Column To Add Sample(s) To: </p><select ng-model="sample_column" ng-options="column as column.column_name for column in sample_row.columns"></select>
 
-    <p>Box in this place : </p>
+    <p>Box in this place: </p>
 
  
     {{sample_box}}
@@ -163,13 +163,14 @@
     <input type="text" name="input" ng-model="sample.subgroup_name" ng-click=" = ''" placeholder="Subgroup Name">
     <input type="text" name="input" ng-model="sample.sample_name" ng-click=" = ''" placeholder="Sample Name">
     <input type="text" name="input" ng-model="sample.slices_per_slide" ng-click=" = ''" placeholder="Slices Per Slide">
+    <input type="text" name="input" ng-model="sample.slice_thickness" ng-click=" = ''" placeholder="Slice Thickness (um)">
     <input type="text" name="input" ng-model="sample.slice_spacing" ng-click=" = ''" placeholder="Slice Spacing (um)">
     <input type="text" name="input" ng-model="sample.date_sectioned" ng-click=" = ''" placeholder="Date Sectioned">
     <input type="text" name="input" ng-model="sample.quantity" ng-click=" = ''" placeholder="Number of Slides">
     <input type="text" name="input" ng-model="sample.start_space" ng-click=" = ''" placeholder="Start Space Number">
 
 
-    {{sample}}
+   
 
   
 
@@ -178,7 +179,10 @@
     <button class="btn btn-default" role="button" ng-click="add_sample()" ng-show="isLoggedIn()">Add Slide(s) to Box</button>
        
 
+    <button class="btn btn-default" role="button" ng-click="boxContents(sample_box.box_ID)" ng-show="isLoggedIn()">Get Box Contents</button>
 
+
+    {{sample_box_contents}}
    
 
  

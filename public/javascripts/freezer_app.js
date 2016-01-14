@@ -34,6 +34,9 @@ function($stateProvider, $urlRouterProvider) {
 
 
 
+
+
+
     $stateProvider
     .state('login', {
   url: '/login',
@@ -74,6 +77,9 @@ $stateProvider
 
   $urlRouterProvider.otherwise('home');
 }]);
+
+
+
 
 
 
@@ -201,6 +207,9 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
       
     });
   };
+
+
+ 
 
   
 
@@ -505,6 +514,8 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 $scope.sample_box = {};
 
+$scope.sample_box_contents = {};
+
 
 
 
@@ -517,8 +528,9 @@ $scope.sample_box = {};
   'sample_name' : "",
   'slices_per_slide': "",
   'slice_spacing': "",
+  'slice_thickness': "",
   'date_sectioned': "",
-  'date_created': "{ type: Date, default: Date.now }",
+  'date_created': "",
   'author': "",
   'quantity': "",
   'start_space': ""
@@ -767,6 +779,15 @@ $scope.update_freezer = function() {
 
 
 };
+
+
+$scope.boxContents = function(box_ID) {
+    return $http.get('/box_contents?box_ID=' +  box_ID , {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      angular.copy(data, $scope.sample_box_contents);
+    });
+  }; 
 
 
   

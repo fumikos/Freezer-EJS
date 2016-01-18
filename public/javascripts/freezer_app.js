@@ -459,6 +459,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
   };
 
+
   //Watches when rack/column model of rack object changes
 
   $scope.$watchCollection('[rack_position, rack_shelf]', function(){
@@ -511,6 +512,10 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 
 };
+
+//new query model
+$scope.query = "";
+
 
 $scope.sample_box = {};
 
@@ -790,10 +795,32 @@ $scope.boxContents = function(box_ID) {
   }; 
 
 
+
+//search /search REST route
+$scope.search = function(query) {
+  
+  return $http.get('/search?query=' + query, {
+
+    headers: {Authorization: 'Bearer ' + auth.getToken()}
+
+
+  }).success(function(data){
+    angular.copy(data, $scope.results);
+
+
+  })
+
+
+
+
+
+};
+
   
 
   
 }]);
+
 
 
 

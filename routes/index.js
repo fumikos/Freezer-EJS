@@ -210,10 +210,44 @@ router.get('/freezers', auth, function(req, res, next) {
 
 
 
+//search boxes for criteria
 
+router.get('/search/', auth, function(req, res, next){
+
+  var query = req.query
+
+  console.log(query);
+
+
+
+  MongoClient.connect(url, function (err, db) {
+
+
+  }
+
+
+  res.json(results);
+
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+ //get contents of box and return to user as json object
 router.get('/box_contents/', auth, function(req, res, next) {
 
-  //get contents of box and return to user as json object
+ 
 
   var ObjectId = require('mongodb').ObjectID;
 

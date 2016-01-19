@@ -1,13 +1,20 @@
 <div class="page-header">
     <h1 align="center">Administration</h1>
 
-  
+
+    <div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Administrative Menu
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li ><a href="#"  ng-click="setActiveItem('users')" >Users</a></li>
+  </ul>
+</div>
 
 
 
-
-
-<div class="container-fluid">
+<div class="container-fluid" ng-show="isActiveItem('users')">
     <row>
 
     <div class="col-md-12">

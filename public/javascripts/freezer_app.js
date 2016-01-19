@@ -60,6 +60,7 @@ function($stateProvider, $urlRouterProvider) {
   }]
 });
 
+
 $stateProvider
 .state('administration', {
   url: '/admin',
@@ -229,6 +230,8 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
 
 
    };
+
+   
 
    o.getAll = function() {
     return $http.get('/admin/users', {
@@ -504,7 +507,7 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 
 
-  //new slide box model
+  //slide box model
   $scope.box = {'box_name':'box_name',
 
   'box_ID' : {}
@@ -513,13 +516,17 @@ freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', fun
 
 };
 
-//new query model
+//query model
 $scope.query = "";
 
 
 $scope.sample_box = {};
 
 $scope.sample_box_contents = {};
+
+
+//search results model
+$scope.search_results = [];
 
 
 
@@ -805,7 +812,8 @@ $scope.search = function(query) {
 
 
   }).success(function(data){
-    angular.copy(data, $scope.results);
+   
+    angular.copy(data, $scope.search_results);
 
 
   })
@@ -833,6 +841,8 @@ function($scope, auth) {
 
 }]);
 
+
+//Controller for the administration page
 freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
 function($scope, $http, admin, auth) {
   $scope.user_list = admin.user_list;
@@ -860,6 +870,34 @@ $scope.delete_user = function() {
 
 
 };
+
+
+$scope.active_item = "placeholder";
+
+//set active menu item
+
+$scope.setActiveItem = function(item){
+
+  $scope.active_item = item;
+
+};
+
+$scope.isActiveItem = function(item){
+
+  if($scope.active_item === item){
+
+    return true;
+  }
+
+  else{
+
+    return false;
+  }
+
+};
+
+
+
 
 
 }]);

@@ -25,10 +25,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Lab' });
 });
 
-// GET admin page. Need to build
-/*router.get('/admin', function(req, res, next) {
-  res.render('admin', { title: 'Administration' });
-});*/
+
 
 
 router.post('/register', function(req, res, next){
@@ -214,28 +211,132 @@ router.get('/freezers', auth, function(req, res, next) {
 
 router.get('/search/', auth, function(req, res, next){
 
-  var query = req.query
+  var queries = ["group_name","subgroup_name","sample_name","slices_per_slide","slice_spacing","slice_thickness","date_sectioned","date_created","author","slide_number"];
 
-  console.log(query);
+  //array containing resulting documents
+  var results = [];
 
+ 
 
-
-  MongoClient.connect(url, function (err, db) {
-
-
-  }
-
-
-  res.json(results);
+  
 
 
 
+MongoClient.connect(url, function (err, db) {
+
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    //HURRAY!! We are connected. :)
+    console.log('Connection established to', url);
+
+    //found object flag. Set to "false" and exit loop when match is found
+
+    var found = false;
+
+    
+    var counter = 0;
+
+    for(var i = 0; found !== true && i < queries.length; i++){
+
+    
+
+      var query = {};
+
+      var placeholder1 = queries[i];
+
+      var placeholder2 = {};
+      console.log(req.query.query)
+
+      console.log(typeof req.query.query)
+
+      placeholder2[placeholder1] = req.query.query;
+
+      query["spaces"] = {$elemMatch : placeholder2};
+
+    
 
 
+
+
+     db.collection('boxes').findOne(query, function (err,result){
+
+      if(err){
+
+        console.log(err);
+
+        counter++;
+
+        if(counter === queries.length){
+
+          db.close();
+        }
+
+
+      }
+
+      else{
+
+        counter++;
+
+        console.log(counter);
+
+        
+        if(result !== null){
+
+          results.push(result)
+
+          found = true;
+
+        }
+
+
+
+        if(counter === queries.length){
+
+          if(results.length === 0){
+
+            console.log(results);
+
+            results[0]= "no result";
+            res.json(results);
+            db.close();
+
+          }
+
+          else {
+
+
+
+            res.json(results);
+         
+            db.close();
+
+
+          };
+
+          
+        };
+
+
+        
+      };
+      
+    });
+
+   };
+
+
+
+  };
+
+ 
 
 });
 
 
+
+});
 
 
 
@@ -292,6 +393,8 @@ router.get('/box_contents/', auth, function(req, res, next) {
       else{
 
         res.json(result);
+
+       
         db.close();
       }
       
@@ -827,7 +930,7 @@ for (var i = 0; i < quantity; i++){
   //clone sample (so not passed by reference)
   temp_sample = JSON.parse(JSON.stringify(sample))
 
-  temp_sample.slide_number = (i + 1);
+  temp_sample.slide_number = (i + 1).toString();
 
   
 

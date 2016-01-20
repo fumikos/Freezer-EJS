@@ -880,6 +880,8 @@ $scope.setActiveItem = function(item){
 
   $scope.active_item = item;
 
+
+
 };
 
 $scope.isActiveItem = function(item){

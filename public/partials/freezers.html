@@ -1,8 +1,23 @@
 
   <div class="page-header">
+
     <h1>Freezer Home</h1>
 
+
+     <div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Freezer Menu
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li ><a href="#">Browse Freezers</a></li>
+    <li ><a href="#" >Search for Samples</a></li>
+    <li ><a href="#" >Add Samples</a></li>
+  </ul>
+
   </div>
+
+
 
   
 
@@ -10,11 +25,14 @@
   
 
     <div class ="container-fluid">
-
+    <row>
     <h1>Freezer Information</h1>
 
-    
+    </row>
 
+    <row>
+
+    <div class="col-md-2">
     
     <p>Select Freezer: </p><select ng-model="default_freezer" ng-options="freezer.freezername for freezer in freezers" ></select>
 
@@ -22,26 +40,89 @@
   <h3>You need to <a href="/#/login">Log In</a> or <a href="/#/register">Register</a> before you can view the freezers.</h3>
 </div>
 
-    <div class="container-fluid">
-    <row>
+    </div>
 
-    <div class="col-md-8">
-
-    <table class="table">
-        <thead><th>Name</th><th>Building</th><th>Floor</th><th>Room</th><th>Shelves</th></thead>
-        <tr><td>{{default_freezer.freezername}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td><td>{{default_freezer.shelves}}
-
-
-
+    
     
 
 
+
+    <div class="col-md-10">
+
+    <table class="table">
+        <thead><th>Name</th><th>Building</th><th>Floor</th><th>Room</th></thead>
+        <tr><td>{{default_freezer.freezername}}</td><td>{{default_freezer.building}}</td><td>{{default_freezer.floor}}</td><td>{{default_freezer.room}}</td>
+
     </table>
 
-    <span><p>Freezer created by {{default_freezer.author}} ON {{default_freezer.date_created}}</p>
-</span>
+    </row>
 
-{{default_freezer}}
+
+
+   
+
+</div>
+
+
+
+
+
+<div class="container-fluid">
+
+<div class="row">
+
+        <div class="col-md-6">
+
+        <ul>
+
+
+        <li ng-repeat="model_shelf in default_freezer.shelves" class="panel panel-default" style="display: inline;" >{{model_shelf.shelf_name}}
+            <ul><li ng-repeat="model_rack in model_shelf.racks" class="panel panel-default" style="display: inline" >{{model_rack.rack_name}}
+
+
+            
+            </li></ul>
+
+        </li>
+
+
+
+
+        </ul>
+
+        </div>
+
+        <div class="col-md-6">
+
+        <table>
+
+
+        <tr ng-repeat="model_row in default_freezer.shelves">{{model_row}}</tr>
+
+
+
+
+
+
+        </table>
+
+       
+
+
+
+
+
+
+        </div>
+
+
+</div>
+
+</div>
+
+
+
+
 
 
     <h1>Add Freezer</h1>
@@ -190,11 +271,48 @@
     <input type="text" ng-model="query">
    <button class="btn btn-default" role="button" ng-click="search(query)" ng-show="isLoggedIn()">Search</button>
 
-   {{search_results}}
+   <br>
+
+   
+
+   <h2>Search Results</h2>
+
+   
+
+    <div ng-repeat="result in search_results">
+  
+    <div ng-repeat="space in result.spaces">
+
+    <table>
+
+    <tr>
+
+    <td ng-repeat="(key,value) in space"><span class="label label-info">{{key}}</span><br><span>{{value}}</span> </td>
+
+
+    </tr>
+
+    
+
+
+    
+
+    </table>
+
+    </div>
+   
+
+    </div>
+
+    
+
  
+ 
+  
 
+   
 
-
+   
 
 
 

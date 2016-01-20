@@ -9,11 +9,18 @@
      <script src="/javascripts/freezer_app.js"></script>
      <script src="/javascripts/angular-ui-router.min.js"></script>
 
-     <style>#rectangle{
+     <style>
+
+
+    #rectangle{
     width:200px;
     height:100px;
-    background:blue;
-}</style>
+    background:blue;}
+
+   
+
+
+</style>
     
 
 
@@ -27,6 +34,10 @@
 
   <body ng-app="freezerApp">
 
+
+ 
+
+
   <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
       <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
@@ -37,7 +48,7 @@
     </ul>
   </nav>
 
-  <ui-view></ui-view>
+  <ui-view>              </ui-view>
 
 
 

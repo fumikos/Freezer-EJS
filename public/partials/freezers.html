@@ -28,6 +28,8 @@
     <row>
     <h1>Freezer Information</h1>
 
+    {{default_freezer}}
+
     </row>
 
     <row>
@@ -263,7 +265,7 @@
     <button class="btn btn-default" role="button" ng-click="boxContents(sample_box.box_ID)" ng-show="isLoggedIn()">Get Box Contents</button>
 
 
-    {{sample_box_contents}}
+
    
 
    <h1>Search:</h1>
@@ -277,20 +279,43 @@
 
    <h2>Search Results</h2>
 
+
+
+
+   <p>Showing {{search_results.length}} search results</p>
+
    
 
     <div ng-repeat="result in search_results">
-  
-    <div ng-repeat="space in result.spaces">
 
-    <table>
+
+
+  
+
+    <table class="table table-bordered">
+
+    <div ng-repeat ="(key,value) in result">
+
+
+
 
     <tr>
+    <th ng-repeat="(key,value) in result" ng-if="key != 'box_ID'">{{key}}</th>
+    </tr>
 
-    <td ng-repeat="(key,value) in space"><span class="label label-info">{{key}}</span><br><span>{{value}}</span> </td>
+    <tr>
+    <td ng-repeat="(key,value) in result" ng-if="key != 'box_ID'">{{value}}</td>
+    </tr>
 
+    <tr>
+    <td>Location</td><td>{{result.box_ID}}</td>
 
     </tr>
+
+
+
+
+    </div>
 
     
 

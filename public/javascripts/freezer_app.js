@@ -532,6 +532,14 @@ $scope.search_results = [];
 
 
 
+
+
+
+
+
+
+
+
   $scope.sample = {
 
   'box_ID' : $scope.sample_box.boxID,
@@ -698,9 +706,6 @@ $scope.sample_box = findBox($scope.default_freezer);
 
 
 
-
-
-
   $scope.default_freezer = $scope.freezers[0];
         
 
@@ -714,6 +719,11 @@ $scope.add_freezer = function() {
   });
 
 };
+
+
+
+
+
 
   $scope.add_shelf = function() {
   

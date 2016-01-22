@@ -54,7 +54,7 @@ router.post('/login', function(req, res, next){
   }
 
   passport.authenticate('local', function(err, user, info){
-    //console.log(user);
+  	//console.log(user);
     if(err){ return next(err); }
 
     
@@ -155,7 +155,7 @@ router.post('/admin/delete_users', auth, function(req, res, next) {
 
 if(req.payload.admin){
 
-  //console.log(req.body);
+	//console.log(req.body);
 
 
   var query = {_id : req.body._id}
@@ -186,7 +186,7 @@ else{
 
 
 
-//return all freezers to the client
+
 router.get('/freezers', auth, function(req, res, next) {
 
   
@@ -195,6 +195,9 @@ router.get('/freezers', auth, function(req, res, next) {
   Freezer.find({},function(err, freezers){
     if(err){ return next(err); }
 
+    console.log(freezers)
+
+    
 
     console.log(JSON.stringify(freezers,null,2));
 
@@ -229,17 +232,12 @@ MongoClient.connect(url, function (err, db) {
 
     //found object flag. Set to "false" and exit loop when match is found
 
+    var found = false;
 
     
-    var counter = 0
-
-    
-
-
+    var counter = 0;
 
     for(var i = 0; i < queries.length; i++){
-
-      
 
     
 
@@ -252,164 +250,96 @@ MongoClient.connect(url, function (err, db) {
 
       placeholder2[placeholder1] = req.query.query;
 
-
       query["spaces"] = {$elemMatch : placeholder2};
 
-
-     
-     
-    //set cursor array to send results
-    var cursor_array = [];
-
-    var counter = queries.length;
-
-    db.collection('boxes').find(query).toArray(function(err,documents){
-
-
     
-      counter--;
-
-      
-
-      
-
-      if(documents.length !== 0){
-
-              
-               //only return matching spaces array elements within matching document
-              for (var i = 0; i < documents.length; i++){
 
 
-                for(var k = 0; k < documents[i].spaces.length; k++){
-
-                  
-                  var current_query = req.query.query
-
-                
-
-                  for (var j = 0; j < queries.length; j++){
-
-                    var key = queries[j];
-
-                    if(documents[i]["spaces"][k][key] === current_query){
-
-                      var item = documents[i]["spaces"][k]
-
-                      item.box_ID = documents[i]._id
-
-                      //console.log(item);
-                      //console.log("break");
-                      
-
-                      cursor_array.push(item);
-                     // cursor_array.push("break");
-                      
-                     
-
-                      
-                    };
-                  
-                  
-                 
-                  
-
-                
 
 
-                };
+     db.collection('boxes').findOne(query, function (err,result){
 
-                
-               
+      if(err){
 
-              }
+        console.log(err);
+
+        counter++;
+
+        if(counter === queries.length){
+
+          db.close();
+        }
 
 
       }
 
-
-    }
-
-      if(counter === 0){
-
-      
-        //Check for duplicate values
-        var tmp_array = cursor_array.slice(0,1)
-
-     
-
-        var found = false;
-
-        for (var i = 0; i < cursor_array.length; i++){
-
-           console.log("break")
-
-
-
-          
-          found = false;
+      else{
 
         
 
-          for (var j = 0; j < tmp_array.length; j++){
+        counter++;
 
-            console.log("j: ",j)
-            console.log(tmp_array[j])
+        
+
+        
+        if(result !== null){
+
+          console.log(placeholder1);
+
+          var returned_result = {};
+
+          returned_result.box_ID = result._id;
+
+          for(var i = 0; i < result.spaces.length; i++){
+
+
             
-
-            //convert objects into JSON to compare, otherwise it will compare by reference!!
-            if(JSON.stringify(tmp_array[j]) === JSON.stringify(cursor_array[i])){
-
-              var found = true;
-              
-
-
-
-
-            }
-
-           
-
-            if(j === tmp_array.length-1 && found === false){
-
-           
-            
-              tmp_array.push(cursor_array[i])
-
-            }
-            
-
-
 
           }
 
+          
+
+          
+
+          results.push(result)
+
+      
+
         }
-       
-       
-        res.json(tmp_array);
 
-        db.close();
-      }
 
+
+        if(counter === queries.length){
+
+          if(results.length === 0){
+
+          
+
+            results[0]= "no result";
+            res.json(results);
+            db.close();
+
+          }
+
+          else {
+
+
+           
+            res.json(results);
+         
+            db.close();
+
+
+          };
+
+          
+        };
+
+
+        
+      };
+      
     });
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
 
    };
 
@@ -1230,17 +1160,17 @@ var inserted_sample = {
  router.post('/update_freezers', auth, function(req, res, next) {
 
 
-  
+ 	
 
 
   var conditions = {_id : req.body._id};
 
   var update = {$set : {
 
-    freezername: req.body.freezername,
-    building : req.body.building,
-    floor : req.body.floor,
-    room : req.body.room
+  	freezername: req.body.freezername,
+  	building : req.body.building,
+  	floor : req.body.floor,
+  	room : req.body.room
 
 
   }};

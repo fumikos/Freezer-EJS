@@ -28,7 +28,7 @@
     <row>
     <h1>Freezer Information</h1>
 
-    {{default_freezer}}
+  
 
     </row>
 
@@ -173,13 +173,17 @@
     <p>Add Rack to Shelf: </p>
     <br>
     <p>Select Shelf To Add Rack To: </p><select ng-model="rack_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
-    <p>Select Shelf Position To Add Rack To: </p><select ng-model="rack_position" ng-options="rack.rack_position as (rack.rack_name + rack.rack_position) for rack in rack_shelf.racks"></select>
+    <p>Select Shelf Position To Add Rack To: </p><select ng-model="rack_index" ng-options="rack_shelf.racks.indexOf(rack) as rack.rack_name + (' (' +(rack_shelf.racks.indexOf(rack) + 1) + ')') for rack in rack_shelf.racks"></select>
+
+  
+
+    <br><br>
+    
+       
+    <br>
+    <br>
 
     
-    <br>
-    <br>
-
-    {{rack_shelf}}
     <br>
     <br>
 
@@ -281,7 +285,6 @@
 
 
 
-
    <p>Showing {{search_results.length}} search results</p>
 
    
@@ -300,15 +303,20 @@
 
 
     <tr>
-    <th ng-repeat="(key,value) in result" ng-if="key != 'box_ID'">{{key}}</th>
+    <th ng-repeat="(key,value) in result" ng-hide="key == 'box_ID' || key == 'date_created' || key =='author'" >{{key}}</th>
     </tr>
 
     <tr>
-    <td ng-repeat="(key,value) in result" ng-if="key != 'box_ID'">{{value}}</td>
+    <td ng-repeat="(key,value) in result" ng-hide="key == 'box_ID' || key == 'date_created' || key =='author'">{{value}}</td>
     </tr>
 
     <tr>
-    <td>Location</td><td>{{result.box_ID}}</td>
+    <td style="font-weight:bold;">Location</td><td ng-repeat="(key,value) in box_locations[result.box_ID]" ><span style="font-weight:bold;">{{key}}</span><br><span>{{value}}</span></td>
+
+  
+
+
+
 
     </tr>
 

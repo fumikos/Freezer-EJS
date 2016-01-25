@@ -887,179 +887,126 @@ for (var i = 0; i < search_results.length; i++){
 
 
   var location = {};
-  var nextObj= {};
-
-
     var freezerSearch = function(obj,box_ID){
 
-      var obj = obj;
-      var box_ID = box_ID
-      console.log("obj ",obj)
-
       
 
-
+      var box_ID = box_ID;
       
-    for(key in obj){
-
-      //console.log("key: ", key, "object: ",obj[key])
-
-      if(typeof(obj[key]) !== 'object' && key !== '__v' && key !== '$$hashKey' && obj[key] !=="EMPTY"){
-
-        
+      for(key in obj){
+     
 
 
-        location[key] = obj[key]
-      }
-
-
-      else if(obj[key].constructor === Array){
-
-        for(subkey in obj[key]){
-
-
-           console.log("WE HAVE ARRAY")
-
-        console.log(JSON.stringify(obj[key][subkey]))
-
-        console.log("now repeating")
-
-        //consle.log freezerSearch(obj[key][subkey],box_ID)
-
-
-
-
+        if(typeof(obj[key]) !== 'object' && key !== "$$hashKey" && key !=="__v" && key !=="author"){
+           
+            
+            location[key] = obj[key];
+           
         }
-   
 
-      }
-
-
-      else if(key === 'box' && obj[key]["box_ID"] === box_ID){
-
-        console.log("we found a box")
-
-        console.log(obj[key]["box_ID"])
-
-
-        return true
-      }
-
-      /*else if(key === 'box' && obj[key]["box_ID"] !== box_ID){
-
-        console.log("does not match")
-
-        console.log(obj[key]["box_ID"])
-
-
-        return(false)
-       
-      }*/
-
-
-
-    }
-
-
-
-    
-      
-    }
-
-
-
-
-
-
-
-
- var final_location = ""
-
-var searchAll = function(obj,box_ID, found, location){
-
-  var found = found
-
-  var location = location
-
- 
-
-if(found === false){
-  
-
-
-  for(key in obj){
-
-
-   
-    if(typeof(obj[key]) == 'object'){
+        if(typeof(obj[key]) == 'object' && key !== 'box'){
 
      
 
-      
-         for(key in obj){
+          if(obj[key].constructor === Array){console.log("WE FOUND ARRAY")}
+
+           for(var i = 0; i < obj[key].length; i++){
+
+          
 
 
 
-                  if(typeof(obj[key]) !== 'object'){
+              for(subkey in obj[key][i]){
 
-                  location[key] = obj[key];
-
-                  //console.log("obj key: ", JSON.stringify(obj[key]))
-                  // console.log("location: ", JSON.stringify(location))
-
-                  
+                console.log("faskldfjkl")
+                console.log(typeof(obj[key][i][subkey]))
 
 
-                   }
 
+                if(typeof(obj[key][i][subkey]) !== 'object' && subkey !=="$$hashKey"){
+
+
+
+                  console.log("subkey: ",subkey)
+                  console.log(typeof(obj[key][i][subkey]))
+                  console.log(JSON.stringify(obj[key][i][subkey]))
+
+                  location[subkey] = obj[key][i][subkey]
+
+                  console.log(location)
+
+                
+                }
+
+
+                else if(typeof(obj[key][i][subkey]) == 'object' && subkey !=='box'){
+
+                  console.log("object subkey: ",subkey)
+
+                  for(var j = 0; j < obj[key][i][subkey].length; j++){
+
+                    for(subsubkey in obj[key][i][subkey][j]){
+
+                      if(typeof(obj[key][i][subkey][j][subsubkey]) !== 'object' && subsubkey !=="$$hashKey" && obj[key][i][subkey][j][subsubkey] !== 'EMPTY'){
+
+
+                        console.log("subsubkey: ", subsubkey);
+                        console.log(obj[key][i][subkey][j][subsubkey])
+                        location[subsubkey] = obj[key][i][subkey][j][subsubkey]
+                        console.log(location)
+
+
+                      }
+
+                      else if(typeof(obj[key][i][subkey][j][subsubkey]) == 'object'){
+
+
+                        //return freezerSearch(obj[key][i][subkey][j][subsubkey],box_ID)
+                      }
+
+
+
+
+
+                    }
+
+
+
+                  }
+
+
+
+
+
+
+                }
+
+                else if(typeof(obj[key][i][subkey]) == 'object' && subkey == 'box'){
+
+                  console.log("box found here")
+                  console.log(obj[key][i][subkey])
+
+                  return location;
+
+                }
+
+
+
+
+              }
+
+
+
+          }
 
         }
 
         
-
+      }
       
-
-      
-          for(key in obj){
-
-             // console.log("KEY: ", key)
-              if(typeof(obj[key]) == 'object'){
-                
-                //console.log("repeating")
-                if(key == 'box' && obj[key]["box_ID"] == box_ID){
-
-                  found = true;
-
-                 // for (var i = 0; i < 5; i++){
-                //console.log("EUREKA WE FOUND A BOX!")}
-               // console.log("LOCATION")
-               // console.log(JSON.stringify(location))
-
-                final_location =(JSON.parse(JSON.stringify(location)))
-
-                  
-                }
-                else{
-              // console.log("obj[key] : ",JSON.stringify(obj[key]))
-                searchAll(obj[key],box_ID,found,location)}
-              }
-
-          }
-        
-      
-
-      
-
     }
 
-  }
-
-
-  }
-
-  
-
-}
+console.log(JSON.stringify(freezerSearch(freezers[0],unique_ids[0])));
 
 
 
@@ -1069,36 +1016,7 @@ if(found === false){
 
 
 
-
-var id_locations = {};
-
-
-
-for(var i = 0; i < unique_ids.length; i++){
- // console.log("unique id")
- // console.log(unique_ids[i])
-  searchAll(freezers,unique_ids[i],false,{})
-
-  delete final_location._id;
-  delete final_location.__v;
-  delete final_location.date_created;
-
-  id_locations[unique_ids[i]] = final_location
-
-
-
-}
-
-
-
-//console.log(id_locations)
-
-
-
-
-
-
-return id_locations
+return unique_ids
 
 
 
@@ -1106,7 +1024,7 @@ return id_locations
 };
 
 
-$scope.box_locations = {};
+$scope.box_locations = [];
 
 
 

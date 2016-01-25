@@ -610,8 +610,8 @@ router.post('/add_shelf', auth, function(req, res, next) {
 
       j = i+1;
 
-      //rack_position set as j (i+1) to not confuse user (they usually don't know the first array index is '0')
-      shelfObj["racks"][i] = {"rack_name" : "EMPTY", "rack_position" : j};
+      
+      shelfObj["racks"][i] = {"rack_name" : "EMPTY"};
 
 
     };
@@ -658,12 +658,14 @@ router.post('/add_rack', auth, function(req, res, next) {
   var rack = req.body.rack
   var rack_name = req.body.rack.rack_name;
   var shelf_name = req.body.rack.shelf_name;
-  var rack_position = req.body.rack.rack_position
+  var rack_index = req.body.rack.rack_index
+  
 
-  //delete row count and column count
+  //delete row count, column count, rack_index
   delete rack.row_count
   delete rack.column_count 
-  delete rack.rack_position
+  delete rack.rack_index
+ 
 
 
 
@@ -719,9 +721,9 @@ router.post('/add_rack', auth, function(req, res, next) {
 
     var set = {}
 
-    --rack_position;
+    
 
-    var placeholder = "shelves." + shelf_space + ".racks." + rack_position;
+    var placeholder = "shelves." + shelf_space + ".racks." + rack_index;
 
     set[placeholder] = rack;
 
@@ -799,7 +801,6 @@ router.post('/add_box', auth, function(req, res, next) {
   var conditions = {"_id" : ObjectId(_id)} ;
 
 
-  box.spaces = [];
 
 
 

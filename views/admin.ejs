@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' />
+    <script src="/javascripts/jquery-2.2.0.min.js"></script>
+     <script src="/javascripts/bootstrap.min.js"></script> 
+     <script src="/javascripts/angular.min.js"></script> 
+     <script src="/javascripts/admin_app.js"></script>
+     <script src="/javascripts/angular-ui-router.min.js"></script>
+
+
+
+    
+
+
+
+  </head>
+
+
+
+  
+
+<body ng-app="adminApp">
+
+<div class="page-header">
+    <h1 align="center">Administration</h1>
+
+
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Administrative Menu
+        <span class="caret"></span>
+      </button>
+
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        <li ><a href="/admin/#/edit_users" >Users</a></li>
+        <li ><a href="/admin/#/edit_freezers">Freezers</a></li>
+      </ul>
+    </div>
+
+ <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
+    <ul class="nav navbar-nav">
+      <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
+      <li ng-show="isLoggedIn()"><a href="" ng-click="logOut()">Log Out</a></li>
+      <li ng-hide="isLoggedIn()"><a href="/admin/#/login">Log In</a></li>
+      <li ng-hide="isLoggedIn()"><a href="/#/home">Home</a></li>
+      <li ng-show="isAdmin()"><a href="/admin">Administration</a></li>
+    </ul>
+  </nav>
+
+<ui-view></ui-view>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+  
+  
+</body>
+</html>

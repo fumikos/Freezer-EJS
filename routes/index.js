@@ -6,7 +6,7 @@ var router = express.Router();
 
 var mongoose = require('mongoose');
 var Freezer = mongoose.model('Freezer');
-var slide_box_100 = mongoose.model('slide_box_100')
+
 var User = mongoose.model('User');
 
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
@@ -84,6 +84,8 @@ router.get('/admin/users', auth, function(req, res, next) {
   User.find(function(err, users){
     if(err){ return next(err); }
 
+    
+
     var user_list = [];
 
     for (i = 0; i < users.length; i++){
@@ -107,18 +109,19 @@ else{
 
 
 
-
+//pickup change to mongodb driver
 router.post('/admin/users', auth, function(req, res, next) {
 
 if(req.payload.admin){
 
+  var ObjectId = require('mongodb').ObjectID;
 
-  
+
+  conditions = {};
+
+  conditions["_id"] = ObjectId(req.body._id)
 
 
-  var conditions = {_id : req.body._id};
-
-  //console.log(conditions);
 
   var update = {$set : {
 
@@ -128,62 +131,60 @@ if(req.payload.admin){
 
   }};
 
+  console.log(req.body)
+  console.log("**************")
+ console.log("conditions: " + conditions);
+ console.log("**************")
+ console.log(update)
 
 
- User.update(conditions, update, function(err, user){
-    if(err){ return next(err); }
-
-    
-
-    res.json(user);
-
-  });
+//
 
 
-}
-else{
 
-  return res.status(401).json({message: 'Unauthorized'});
+MongoClient.connect(url, function (err, db) {
 
-
-};
-
-});
+  if (err) {
+    console.log('Unable to connect to the mongoDB server. Error:', err);
+  } else {
+    console.log("hooray!")
 
 
-router.post('/admin/delete_users', auth, function(req, res, next) {
-
-if(req.payload.admin){
-
-  //console.log(req.body);
+     db.collection('users').update(conditions, update, function (err,result){
 
 
-  var query = {_id : req.body._id}
+      console.log("done");
+
+      //console.log(db)
+
+      db.close();
+
+    })
 
 
-  
+
+   
  
-User.remove(query, function (err,removed) {
-  if (err) return err;
+}
 
-  
 
-  res.json(removed);
-  
 });
+
+
+
+//
 
 }
+
 else{
 
-  return res.status(401).json({message: 'Unauthorized'});
+  return console.log("Unauthorized")
 
 
-};
+}
+
 
 });
-
-
-
 
 
 //return all freezers to the client

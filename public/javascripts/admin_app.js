@@ -1,41 +1,11 @@
-var freezerApp = angular.module('freezerApp', ['ui.router']);
+var adminApp = angular.module('adminApp', ['ui.router']);
 
 
 
-freezerApp.config([
+adminApp.config([
 '$stateProvider',
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
-
-  $stateProvider
-    .state('home', {
-      url: '/home',
-      templateUrl: '/partials/home.html',
-      
-      
-      
-    });
-
-
-
-
-   $stateProvider
-    .state('freezer', {
-      url: '/freezers',
-      templateUrl: 'partials/freezers.html',
-      controller: 'freezerCtrl',
-      resolve: {
-      freezerPromise: ['freezers', function(freezers){
-      return freezers.getAll();
-        }]
-      }
-      
-    });
-
-
-
-
-
 
     $stateProvider
     .state('login', {
@@ -44,10 +14,11 @@ function($stateProvider, $urlRouterProvider) {
   controller: 'AuthCtrl',
   onEnter: ['$state', 'auth', function($state, auth){
     if(auth.isLoggedIn()){
-      $state.go('freezers');
+      $state.go('edit_users');
     }
   }]
 })
+
     $stateProvider
 .state('register', {
   url: '/register',
@@ -55,48 +26,35 @@ function($stateProvider, $urlRouterProvider) {
   controller: 'AuthCtrl',
   onEnter: ['$state', 'auth', function($state, auth){
     if(auth.isLoggedIn()){
-      $state.go('freezers');
+      $state.go('edit_users');
     }
   }]
 });
 
 
+
+
 $stateProvider
-.state('administration', {
-  url: '/admin',
-  templateUrl: '/partials/admin.html',
-
-  controller: 'adminCtrl',
-
-  resolve: {
-      adminPromise: ['admin', function(admin){
-      return admin.getAll();
-        }]
-      }
-})
-
-
-
 .state('edit_users', {
-  parent: 'administration',
   url: '/edit_users',
+  templateUrl: '/partials/admin/edit_users.html',
   controller: 'adminCtrl',
-  templateUrl: '/partials/admin/edit_users.html'
-  })
+ 
+});
 
+$stateProvider
 .state('edit_freezers', {
-  parent: 'administration',
   url: '/edit_freezers',
-  templateUrl: '/partials/admin/edit_freezers.html'
-  });
+  templateUrl: '/partials/admin/edit_freezers.html',
+  controller: 'adminCtrl',
+ 
+});
 
 
 
 
 
-
-
-  $urlRouterProvider.otherwise('home');
+  $urlRouterProvider.otherwise('edit_users');
 }]);
 
 
@@ -104,7 +62,7 @@ $stateProvider
 
 
 
-freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
+adminApp.factory('freezers', ['$http', 'auth', function($http,auth){
   var o = {
     freezers: []
   };
@@ -243,7 +201,7 @@ return o;
 
 
 
-freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
+adminApp.factory('admin', ['$http', 'auth', function($http, auth){
    var o = {
 
     user_list: []
@@ -251,7 +209,7 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
 
    };
 
- 
+   
 
    o.getAll = function() {
     return $http.get('/admin/users', {
@@ -266,11 +224,6 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
     return $http.post('/admin/users', user, {
     headers: {Authorization: 'Bearer '+auth.getToken()}
   }).success(function(data){
-
-    console.log(data)
-
-   
-    
 
 
   })
@@ -336,7 +289,7 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
 
 
 
-freezerApp.factory('auth', ['$http', '$window', function($http, $window){
+adminApp.factory('auth', ['$http', '$window', function($http, $window){
    var auth = {};
 
    auth.saveToken = function (token){
@@ -439,7 +392,7 @@ auth.logOut = function(){
 
 
 
-freezerApp.controller('AuthCtrl', [
+adminApp.controller('AuthCtrl', [
 '$scope',
 '$state',
 'auth',
@@ -450,7 +403,7 @@ function($scope, $state, auth){
     auth.register($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('freezer');
+      $state.go('admin');
     });
   };
 
@@ -458,13 +411,13 @@ function($scope, $state, auth){
     auth.logIn($scope.user).error(function(error){
       $scope.error = error;
     }).then(function(){
-      $state.go('freezer');
+      $state.go('admin');
     });
   };
 }])
 
 
-freezerApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', function ($scope,$http,freezers,auth) {
+adminApp.controller('freezerCtrl', ['$scope', '$http', 'freezers', 'auth', function ($scope,$http,freezers,auth) {
 
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.freezers = freezers.freezers;
@@ -1149,7 +1102,7 @@ $scope.box_locations = {};
 
 
 
-freezerApp.controller('NavCtrl', ['$scope', 'auth',
+adminApp.controller('NavCtrl', ['$scope', 'auth',
 function($scope, auth) {
   $scope.isLoggedIn = auth.isLoggedIn;
   $scope.currentUser = auth.currentUser;
@@ -1160,20 +1113,17 @@ function($scope, auth) {
 
 
 //Controller for the administration page
-freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
+adminApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
 function($scope, $http, admin, auth) {
   $scope.user_list = admin.user_list;
 
   
-$scope.default_user = $scope.user_list[0]
- 
+
+  $scope.default_user = $scope.user_list[0];
 
   $scope.edit_user = function() {
-
   
-  
-  admin.edit_user($scope.default_user)
-
+  admin.edit_user($scope.default_user);
 
 
 
@@ -1194,7 +1144,6 @@ $scope.delete_user = function() {
 
 $scope.active_item = "placeholder";
 
-
 //set active menu item
 
 $scope.setActiveItem = function(item){
@@ -1204,7 +1153,6 @@ $scope.setActiveItem = function(item){
 
 
 };
-
 
 $scope.isActiveItem = function(item){
 

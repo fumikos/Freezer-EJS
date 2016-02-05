@@ -17,7 +17,7 @@ var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://localhost:27017/freezers';
 
 require('./models/freezers');
-require('./models/slide_box_100');
+
 require('./models/Users');
 require('./config/passport');
 

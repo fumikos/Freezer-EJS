@@ -1,1 +1,71 @@
 <h2>EDIT FREEZERS</h2>
+
+</div>
+
+
+
+
+
+
+    <h1>Add Freezer</h1>
+
+
+
+  
+    <input type="text" name="input" ng-model="freezer.freezername" ng-click="freezer.freezername = ''" placeholder="Freezer Name">
+    <input type="text" name="input" ng-model="freezer.building" ng-click="freezer.building = ''" placeholder="Building">
+    <input type="text" name="input" ng-model="freezer.floor" ng-click="freezer.floor = ''" placeholder="Floor">
+    <input type="text" name="input" ng-model="freezer.room" ng-click="freezer.room = ''" placeholder="Room">
+    <button class="btn btn-default" role="button" ng-click="add_freezer()" ng-show="isLoggedIn()">Add Freezer</button>
+    <br>
+    
+    <br>
+   
+
+
+
+    <h1>Edit/Delete Freezer</h1>
+
+
+
+    <p>Select Freezer: </p><select ng-model="default_freezer" ng-options="freezer.freezername for freezer in freezers" ></select>
+
+    <input type="text" name="input" ng-model="default_freezer.freezername" ng-click="freezer.freezername = ''" placeholder="Freezer Name">
+    <input type="text" name="input" ng-model="default_freezer.building" ng-click="freezer.building = ''" placeholder="Building">
+    <input type="text" name="input" ng-model="default_freezer.floor" ng-click="freezer.floor = ''" placeholder="Floor">
+    <input type="text" name="input" ng-model="default_freezer.room" ng-click="freezer.room = ''" placeholder="Room">
+    <button class="btn btn-default" role="button" ng-click="update_freezer()" ng-show="isLoggedIn()">Save Changes</button>
+    <button class="btn btn-default" role="button" ng-click="delete_freezer()" ng-show="isLoggedIn()">Delete Freezer</button>
+    <br>
+    <br>
+    <p>Add Shelf To Freezer: </p>
+    <input type="text" name="input" ng-model="shelf.shelf_name" ng-click="shelf.shelf_name = ''" placeholder="Shelf Name">
+    <input type="text" name="input" ng-model="shelf.rack_spaces" ng-click="shelf.rack_spaces = ''" placeholder="Rack Spaces">
+    <button class="btn btn-default" role="button" ng-click="add_shelf()" ng-show="isLoggedIn()">Add Shelf</button>
+    <br>
+    <p>Add Rack to Shelf: </p>
+    <br>
+    <p>Select Shelf To Add Rack To: </p><select ng-model="rack_shelf" ng-options="shelf as shelf.shelf_name for shelf in default_freezer.shelves"></select>
+    <p>Select Shelf Position To Add Rack To: </p><select ng-model="rack_index" ng-options="rack_shelf.racks.indexOf(rack) as rack.rack_name + (' (' +(rack_shelf.racks.indexOf(rack) + 1) + ')') for rack in rack_shelf.racks"></select>
+
+  
+
+    <br><br>
+    
+       
+    <br>
+    <br>
+
+    
+    <br>
+    <br>
+
+
+
+    
+    <input type="text" name="input" ng-model="rack.rack_name" ng-click=" = ''" placeholder="Rack Name">
+    <input type="text" name="input" ng-model="rack.row_count" ng-click=" = ''" placeholder="Rack Rows">
+    <input type="text" name="input" ng-model="rack.column_count" ng-click=" = ''" placeholder="Rack Columns">
+    <button class="btn btn-default" role="button" ng-click="add_rack()" ng-show="isLoggedIn()">Add Rack to Shelf</button>
+
+    <br><br>

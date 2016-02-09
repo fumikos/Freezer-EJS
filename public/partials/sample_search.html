@@ -1,0 +1,64 @@
+<h1>Search:</h1>
+
+    <input type="text" ng-model="query">
+   <button class="btn btn-default" role="button" ng-click="search(query)" ng-show="isLoggedIn()">Search</button>
+
+   <br>
+
+
+
+
+<h2>Search Results</h2>
+
+
+
+
+
+   <p>Showing {{search_results.length}} search results</p>
+
+   
+
+    <div ng-repeat="result in search_results">
+
+
+
+  
+
+    <table class="table table-bordered">
+
+    <div ng-repeat ="(key,value) in result">
+
+
+
+
+    <tr>
+    <th ng-repeat="(key,value) in result" ng-hide="key == 'box_ID' || key == 'date_created' || key =='author'" >{{key}}</th>
+    </tr>
+
+    <tr>
+    <td ng-repeat="(key,value) in result" ng-hide="key == 'box_ID' || key == 'date_created' || key =='author'">{{value}}</td>
+    </tr>
+
+    <tr>
+    <td style="font-weight:bold;">Location</td><td ng-repeat="(key,value) in box_locations[result.box_ID]" ><span style="font-weight:bold;">{{key}}</span><br><span>{{value}}</span></td>
+
+  
+
+
+
+
+    </tr>
+
+
+
+
+    </div>
+
+    
+
+
+    
+
+    </table>
+
+    </div>

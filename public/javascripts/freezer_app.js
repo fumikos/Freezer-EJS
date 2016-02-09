@@ -30,6 +30,58 @@ function($stateProvider, $urlRouterProvider) {
         }]
       }
       
+    })
+
+    .state('search_samples', {
+      parent: 'freezer',
+      url: '/sample_search',
+      templateUrl: 'partials/sample_search.html',
+      controller: 'freezerCtrl',
+      resolve: {
+      freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+        }]
+      }
+      
+    })
+
+    .state('browse_freezers', {
+      parent: 'freezer',
+      url: '/browse_freezers',
+      templateUrl: 'partials/browse_freezers.html',
+      controller: 'freezerCtrl',
+      resolve: {
+      freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+        }]
+      }
+      
+    })
+
+    .state('add_samples', {
+      parent: 'freezer',
+      url: '/add_samples',
+      templateUrl: 'partials/add_samples.html',
+      controller: 'freezerCtrl',
+      resolve: {
+      freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+        }]
+      }
+      
+    })
+
+    .state('add_box', {
+      parent: 'freezer',
+      url: '/add_box',
+      templateUrl: 'partials/add_box.html',
+      controller: 'freezerCtrl',
+      resolve: {
+      freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+        }]
+      }
+      
     });
 
 
@@ -87,7 +139,13 @@ $stateProvider
 .state('edit_freezers', {
   parent: 'administration',
   url: '/edit_freezers',
-  templateUrl: '/partials/admin/edit_freezers.html'
+  controller: 'adminCtrl',
+  templateUrl: '/partials/admin/edit_freezers.html',
+  resolve: {
+      freezerPromise: ['freezers', function(freezers){
+      return freezers.getAll();
+        }]
+      }
   });
 
 
@@ -109,10 +167,6 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
     freezers: []
   };
 
-
-  
-
-
   o.getAll = function() {
     return $http.get('/freezers', {
     headers: {Authorization: 'Bearer '+auth.getToken()}
@@ -122,44 +176,6 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
       angular.copy(data, o.freezers);
     });
   }; 
-
-
-
-   o.create_freezer = function(freezer,callback) {
-    return $http.post('/freezers', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-      o.freezers.push(data);
-      callback();
-    });
-  };
-
-  o.add_shelf = function(freezer,shelf) {
-
-    //add shelf property to freezer object
-
-    freezer.shelf = shelf;
-   
-
-    return $http.post('/add_shelf', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-      
-    });
-  };
-
-  o.add_rack = function(freezer,rack) {
-
-    freezer.rack = rack;
-
-
-    return $http.post('/add_rack', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-      
-    });
-  };
-
 
   o.add_box = function(freezer,box) {
 
@@ -187,54 +203,6 @@ freezerApp.factory('freezers', ['$http', 'auth', function($http,auth){
   };
 
 
-
-
-
-  o.update_freezer = function(freezer) {
-    return $http.post('/update_freezers', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-  
-    });
-  };
-
-  o.delete_freezer = function(freezer,callback) {
-    return $http.post('/delete_freezers', freezer, {
-    headers: {Authorization: 'Bearer '+auth.getToken()}
-  }).success(function(data){
-
-    
-
-      
-      if (data.ok === 1 && data.n === 1){
-
-
-
-        
-
-        var index = o.freezers.indexOf(freezer);
-        o.freezers.splice(index,1);
-
-        
-      }
-
-      callback();
-      
-
-
-      
-      
-      
-      
-    });
-  };
-
-
- 
-
-  
-
- 
 
 return o;
 
@@ -306,6 +274,90 @@ freezerApp.factory('admin', ['$http', 'auth', function($http, auth){
       
     });
   };
+
+
+
+
+
+  o.create_freezer = function(freezer,callback) {
+    return $http.post('/freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      o.freezers.push(data);
+      callback();
+    });
+  };
+
+
+  o.add_shelf = function(freezer,shelf) {
+
+    //add shelf property to freezer object
+
+    freezer.shelf = shelf;
+   
+
+    return $http.post('/add_shelf', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
+  o.add_rack = function(freezer,rack) {
+
+    freezer.rack = rack;
+
+
+    return $http.post('/add_rack', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+      
+    });
+  };
+
+   o.update_freezer = function(freezer) {
+    return $http.post('/update_freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+  
+    });
+  };
+
+
+   o.delete_freezer = function(freezer,callback) {
+    return $http.post('/delete_freezers', freezer, {
+    headers: {Authorization: 'Bearer '+auth.getToken()}
+  }).success(function(data){
+
+    
+
+      
+      if (data.ok === 1 && data.n === 1){
+
+
+
+        
+
+        var index = o.freezers.indexOf(freezer);
+        o.freezers.splice(index,1);
+
+        
+      }
+
+      callback();
+      
+
+
+      
+      
+      
+      
+    });
+  };
+
+
+
+
 
      
 
@@ -735,44 +787,14 @@ $scope.sample_box = findBox($scope.default_freezer);
 
 
 
-  $scope.default_freezer = $scope.freezers[0];
-        
-
-$scope.add_freezer = function() {
-  
-  freezers.create_freezer($scope.freezer,function(){
-
-    
-
-    $scope.default_freezer = $scope.freezers[$scope.freezers.length-1];
-  });
-
-};
 
 
 
 
 
 
-  $scope.add_shelf = function() {
-  
-  freezers.add_shelf($scope.default_freezer,$scope.shelf);
 
 
-
-
-
-};
-
-$scope.add_rack = function() {
-  
-  freezers.add_rack($scope.default_freezer,$scope.rack);
-
-
-
-
-
-};
 
 
 $scope.add_box = function() {
@@ -1160,12 +1182,50 @@ function($scope, auth) {
 
 
 //Controller for the administration page
-freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth',
-function($scope, $http, admin, auth) {
+freezerApp.controller('adminCtrl', ['$scope', '$http', 'admin', 'auth', 'freezers',
+function($scope, $http, admin, auth, freezers) {
+  $scope.isLoggedIn = auth.isLoggedIn;
+  $scope.freezers = freezers.freezers;
   $scope.user_list = admin.user_list;
 
   
 $scope.default_user = $scope.user_list[0]
+
+//$scope.default_freezer = $scope.freezers[0];
+        
+
+$scope.add_freezer = function() {
+  
+  admin.create_freezer($scope.freezer,function(){
+
+    
+
+    $scope.default_freezer = $scope.freezers[$scope.freezers.length-1];
+  });
+
+};
+
+
+
+  $scope.add_shelf = function() {
+  
+  admin.add_shelf($scope.default_freezer,$scope.shelf);
+
+
+
+
+
+};
+
+$scope.add_rack = function() {
+  
+  admin.add_rack($scope.default_freezer,$scope.rack);
+
+
+
+
+
+};
  
 
   $scope.edit_user = function() {
@@ -1192,33 +1252,7 @@ $scope.delete_user = function() {
 };
 
 
-$scope.active_item = "placeholder";
 
-
-//set active menu item
-
-$scope.setActiveItem = function(item){
-
-  $scope.active_item = item;
-
-
-
-};
-
-
-$scope.isActiveItem = function(item){
-
-  if($scope.active_item === item){
-
-    return true;
-  }
-
-  else{
-
-    return false;
-  }
-
-};
 
 
 
